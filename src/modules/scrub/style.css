@@ -1,0 +1,45 @@
+.g-scrub {
+  position: absolute; inset: 0;
+  display: grid; place-items: center;
+  padding: calc(env(safe-area-inset-top) + var(--hb)) 4vw calc(env(safe-area-inset-bottom) + 4vmin);
+  background: radial-gradient(circle at 50% 55%, rgba(255, 255, 255, .8), transparent 65%);
+}
+.sc-wrap {
+  --W: min(88vw, 70vh);
+  position: relative;
+  width: var(--W); height: var(--W);
+  touch-action: none;
+}
+@media (orientation: landscape) { .sc-wrap { --W: min(70vw, 80vh); } }
+.sc-subject {
+  position: absolute; inset: 0;
+  display: grid; place-items: center;
+  font-size: calc(var(--W) * .92);
+  pointer-events: none;
+}
+.sc-subject.clean { animation: scShine 1.2s ease-in-out 2; }
+@keyframes scShine {
+  50% { filter: brightness(1.15) drop-shadow(0 0 3vmin rgba(255, 236, 153, .95)); scale: 1.05; }
+}
+.sc-dirt {
+  position: absolute;
+  font-size: calc(var(--W) * .2);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  transition: opacity .1s, scale .1s;
+}
+.sc-dirt.gone { animation: scGone .35s forwards; }
+@keyframes scGone { to { opacity: 0; scale: 1.4; } }
+
+.sc-tool {
+  position: fixed; z-index: 65;
+  font-size: min(22vmin, 140px);
+  transform: translate(-30%, -70%) rotate(-20deg);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .15s;
+  filter: drop-shadow(0 1vmin 1vmin rgba(74, 59, 107, .25));
+}
+.sc-tool.on { opacity: 1; animation: scRub .25s ease-in-out infinite alternate; }
+@keyframes scRub { from { rotate: -6deg; } to { rotate: 6deg; } }
+.sc-bubble { position: absolute; width: 9vmin; height: 9vmin; pointer-events: none; }

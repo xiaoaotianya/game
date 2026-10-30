@@ -1,0 +1,53 @@
+.g-cards {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center; gap: 2vmin;
+  padding: calc(env(safe-area-inset-top) + var(--hb) + 2vmin) 2vmin calc(env(safe-area-inset-bottom) + 3vmin);
+}
+.fc-holder {
+  position: relative;
+  width: min(72vw, 52vh); height: min(90vw, 66vh);
+  touch-action: none;
+}
+@media (orientation: landscape) {
+  .fc-holder { width: min(46vw, 64vh); height: min(56vw, 78vh); }
+}
+.fc-card {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2vmin;
+  border-radius: 8vmin;
+  background: var(--bg);
+  border: 1.5vmin solid #fff;
+  box-shadow: var(--shadow);
+}
+.fc-pic { font-size: min(44vw, 30vh); }
+@media (orientation: landscape) { .fc-pic { font-size: min(26vw, 36vh); } }
+.fc-name { font-size: clamp(28px, 8vmin, 64px); font-weight: 800; }
+.fc-sub { font-size: clamp(18px, 5vmin, 40px); opacity: .6; margin-top: -1vmin; }
+
+.in-right { animation: inRight .4s cubic-bezier(.3, 1.3, .5, 1); }
+.in-left { animation: inLeft .4s cubic-bezier(.3, 1.3, .5, 1); }
+.out-left { animation: outLeft .4s forwards; }
+.out-right { animation: outRight .4s forwards; }
+@keyframes inRight { from { transform: translateX(80%) rotate(12deg); opacity: 0; } }
+@keyframes inLeft { from { transform: translateX(-80%) rotate(-12deg); opacity: 0; } }
+@keyframes outLeft { to { transform: translateX(-90%) rotate(-12deg); opacity: 0; } }
+@keyframes outRight { to { transform: translateX(90%) rotate(12deg); opacity: 0; } }
+
+.fc-nav {
+  flex: none;
+  width: clamp(48px, 11vmin, 90px); height: clamp(48px, 11vmin, 90px);
+  display: grid; place-items: center;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: var(--shadow);
+  color: #7c5cff;
+  font-size: clamp(20px, 5vmin, 40px);
+  cursor: pointer;
+}
+.fc-nav:active { scale: .9; }
+@media (orientation: portrait) {
+  /* 竖屏：箭头放在卡片下方两侧 */
+  .g-cards { flex-wrap: wrap; align-content: center; }
+  .fc-holder { order: 0; flex-basis: 100%; max-width: min(72vw, 52vh); }
+  .fc-nav { order: 1; margin: 2vmin 8vw 0; }
+}

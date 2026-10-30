@@ -1,0 +1,21 @@
+.g-piano {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; gap: 1.2vmin;
+  padding: calc(env(safe-area-inset-top) + var(--hb) + 3vmin) 3vmin calc(env(safe-area-inset-bottom) + 3vmin);
+}
+.key {
+  flex: 1;
+  display: flex; align-items: center; justify-content: flex-end;
+  padding: 0 5vmin;
+  border-radius: 3vmin;
+  background: var(--c);
+  box-shadow: 0 1.2vmin 0 rgba(0, 0, 0, .15);
+  font-size: min(8vh, 12vw);
+  transition: transform .08s, box-shadow .08s;
+  touch-action: none;
+}
+.key.down { transform: translateY(1vmin); box-shadow: 0 .2vmin 0 rgba(0, 0, 0, .15); filter: brightness(1.1); }
+@media (orientation: landscape) {
+  .g-piano { flex-direction: row; padding-left: calc(var(--hb) + 4vmin); }
+  .key { flex-direction: column; justify-content: flex-end; padding: 0 0 5vmin; font-size: min(7vw, 12vh); }
+}

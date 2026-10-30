@@ -1,0 +1,54 @@
+/* --S 拼图整体边长；--P 当前所在位置的图块基准边长（盘里 = S，托盘里缩小）。
+   每块 = P/cols × P/rows，块内放 P×P 的整图并按行列偏移，拼起来无缝 */
+.g-puzzle { --S: min(70vw, 38vh); }
+.pz-grid { --P: var(--S); }
+.pz-tray { --P: calc(var(--S) * .85); }
+@media (orientation: landscape) {
+  .g-puzzle { --S: min(40vw, 62vh); flex-direction: row; padding-left: calc(var(--hb) + 4vmin); }
+  .pz-tray { width: 45%; --P: calc(var(--S) * .7); }
+}
+.pz-board {
+  position: relative;
+  width: var(--S); height: var(--S);
+  border-radius: 4vmin;
+  background: rgba(255, 255, 255, .7);
+  box-shadow: var(--shadow);
+}
+.pz-sil {
+  position: absolute; inset: 0;
+  display: grid; place-items: center;
+  font-size: calc(var(--S) * .8);
+  filter: brightness(0); opacity: .1;
+}
+.pz-grid {
+  position: absolute; inset: 0;
+  display: grid;
+  grid-template-columns: repeat(var(--cols), 1fr);
+  grid-template-rows: repeat(var(--rows), 1fr);
+}
+.pz-slot { position: relative; outline: .4vmin dashed rgba(74, 59, 107, .22); outline-offset: -.2vmin; }
+.complete .pz-slot { outline-color: transparent; transition: outline-color .3s; }
+.complete { animation: happy .6s ease-in-out 2; }
+@keyframes happy { 50% { scale: 1.06; } }
+
+.pz-tray { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 3vmin; }
+.pz-piece {
+  position: relative;
+  width: calc(var(--P) / var(--cols)); height: calc(var(--P) / var(--rows));
+  overflow: hidden;
+  background: #fff;
+  border-radius: 2vmin;
+  box-shadow: var(--shadow);
+  touch-action: none;
+}
+.pz-piece.dragging { z-index: 50; }
+.pz-piece.placed { position: absolute; inset: 0; width: auto; height: auto; background: transparent; box-shadow: none; border-radius: 0; }
+.pz-img {
+  position: absolute;
+  width: var(--P); height: var(--P);
+  left: calc(var(--P) / var(--cols) * var(--c) * -1);
+  top: calc(var(--P) / var(--rows) * var(--r) * -1);
+  display: grid; place-items: center;
+  font-size: calc(var(--P) * .8);
+  pointer-events: none;
+}

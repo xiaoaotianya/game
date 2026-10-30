@@ -1,0 +1,42 @@
+.g-balloons { position: absolute; inset: 0; overflow: hidden; }
+.balloon {
+  position: absolute; bottom: 0;
+  width: var(--s); height: calc(var(--s) * 1.2);
+  margin-left: calc(var(--s) / -2);
+  animation: rise var(--d) linear forwards;
+  pointer-events: none;
+}
+.balloon::after {
+  content: ""; position: absolute; top: 100%; left: 50%;
+  width: 2px; height: calc(var(--s) * .9);
+  background: rgba(74, 59, 107, .3);
+}
+.balloon .body {
+  width: 100%; height: 100%;
+  display: grid; place-items: center;
+  font-size: calc(var(--s) * .48);
+  border-radius: 50% 50% 48% 48% / 55% 55% 45% 45%;
+  background:
+    radial-gradient(circle at 30% 25%, rgba(255, 255, 255, .8) 0 7%, transparent 8%),
+    var(--c);
+  box-shadow: inset -1.5vmin -2vmin 0 rgba(0, 0, 0, .1);
+  animation: sway 2.5s ease-in-out infinite alternate;
+  pointer-events: auto;
+}
+@keyframes rise {
+  from { transform: translateY(calc(var(--s) * 1.3)); }
+  to { transform: translateY(calc(-100vh - var(--s) * 2.4)); }
+}
+@keyframes sway { from { rotate: -6deg; } to { rotate: 6deg; } }
+.reveal {
+  position: absolute; z-index: 5;
+  font-size: 30vmin;
+  pointer-events: none;
+  animation: reveal 1.4s forwards;
+}
+@keyframes reveal {
+  0% { transform: translate(-50%, -50%) scale(.2); }
+  25% { transform: translate(-50%, -50%) scale(1.15); }
+  40% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  100% { transform: translate(-50%, -80%) scale(1); opacity: 0; }
+}

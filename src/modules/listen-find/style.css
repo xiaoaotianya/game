@@ -1,0 +1,26 @@
+.lf-ear {
+  width: clamp(64px, 16vmin, 120px); height: clamp(64px, 16vmin, 120px);
+  display: grid; place-items: center;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: var(--shadow);
+  font-size: clamp(32px, 8vmin, 60px);
+  animation: float 2s ease-in-out infinite;
+  cursor: pointer;
+}
+.lf-ear:active { scale: .9; }
+.lf-grid {
+  --it: min(38vw, 25vh);
+  display: grid; grid-template-columns: repeat(2, auto); gap: 5vmin;
+  justify-content: center;
+}
+.lf-grid[data-n="3"] { grid-template-columns: repeat(3, auto); --it: min(27vw, 22vh); }
+@media (orientation: landscape) {
+  .lf-grid { --it: min(24vw, 38vh); }
+  .lf-grid[data-n="3"] { --it: min(22vw, 36vh); }
+  .lf-grid[data-n="4"] { grid-template-columns: repeat(4, auto); --it: min(18vw, 34vh); }
+}
+.lf-tile { cursor: pointer; transition: scale .15s; }
+.lf-tile:active { scale: .92; }
+.lf-tile.right { outline: 1.2vmin solid #7ed957; animation: happy .6s ease-in-out 2; }
+@keyframes happy { 50% { scale: 1.12; } }

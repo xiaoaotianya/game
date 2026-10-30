@@ -1,0 +1,22 @@
+.oo-q {
+  width: clamp(64px, 16vmin, 120px); height: clamp(64px, 16vmin, 120px);
+  display: grid; place-items: center;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: var(--shadow);
+  font-size: clamp(36px, 10vmin, 76px);
+  animation: float 2s ease-in-out infinite;
+  cursor: pointer;
+}
+.oo-row { --it: min(40vw, 20vh); gap: 4vmin; }
+.oo-row[data-n="4"] { --it: min(38vw, 18vh); }
+.oo-row[data-n="5"] { --it: min(27vw, 16vh); }
+@media (orientation: landscape) {
+  .oo-row { --it: min(24vw, 34vh) !important; flex-wrap: nowrap; }
+  .oo-row[data-n="4"] { --it: min(19vw, 32vh) !important; }
+  .oo-row[data-n="5"] { --it: min(15vw, 30vh) !important; }
+}
+.oo-tile { cursor: pointer; transition: scale .15s; }
+.oo-tile:active { scale: .92; }
+.oo-tile.right { outline: 1.2vmin solid #7ed957; animation: ooHappy .6s ease-in-out 2; }
+@keyframes ooHappy { 50% { scale: 1.12; } }

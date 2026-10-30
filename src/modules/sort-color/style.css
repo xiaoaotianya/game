@@ -1,0 +1,23 @@
+.g-colors .items { gap: 3vmin; }
+.g-colors .items .tile { --it: min(20vw, 13vh); }
+@media (orientation: landscape) { .g-colors .items .tile { --it: min(12vw, 22vh); } }
+
+.basket {
+  --bk: min(28vw, 19vh);
+  width: var(--bk); height: calc(var(--bk) * .8);
+  background: var(--c);
+  border-radius: 2vmin 2vmin 45% 45% / 2vmin 2vmin 40% 40%;
+  border-top: 2vmin solid color-mix(in srgb, var(--c) 70%, #000);
+  box-shadow: var(--shadow), inset 0 -2vmin 0 rgba(0, 0, 0, .08);
+}
+.g-colors .row:first-child:has(.basket:nth-child(4)) .basket { --bk: min(21vw, 16vh); }
+@media (orientation: landscape) {
+  .basket { --bk: min(20vw, 32vh); }
+  .g-colors .row:first-child:has(.basket:nth-child(4)) .basket { --bk: min(17vw, 30vh); }
+}
+.bin { height: 100%; display: flex; flex-wrap: wrap; align-content: center; justify-content: center; gap: 1vmin; padding: 1vmin; }
+.tile.small {
+  width: calc(var(--bk) * .36); height: calc(var(--bk) * .36);
+  font-size: calc(var(--bk) * .26);
+  background: rgba(255, 255, 255, .85); box-shadow: none;
+}

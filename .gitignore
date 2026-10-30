@@ -1,0 +1,6 @@
+node_modules
+dist
+dev-dist
+*.log
+# 切图预览，可由 art/slice.py 重新生成
+art/previews/
