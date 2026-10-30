@@ -13,7 +13,7 @@ permissions:
 
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   build:
@@ -22,8 +22,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 24
+          node-version-file: .nvmrc
           cache: npm
+      # lock 里混入公司内网地址时，在这里直接给出明确提示
+      - run: node scripts/fix-lock.mjs --check
       - run: npm ci --no-audit --no-fund
       - run: npm run build
       - uses: actions/upload-pages-artifact@v3
