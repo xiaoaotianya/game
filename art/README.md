@@ -42,3 +42,13 @@ src/content/art-manifest.ts   已有插画的 id 列表（切图后重新生成�
 
 - 海洋图集里「鱿鱼」被画成了第二只章鱼，已跳过并从海洋包移除。
 - 交通图集里飞机和帆船位置互换，切图时已按实际位置命名。
+
+## 涂色线稿
+
+线稿也用 Seedream 生成（2×2 网格，提示词要写明：纯黑粗线、轮廓闭合、大块区域、身体上不要画分割线、不填色）。生成后运行：
+
+```
+python art/coloring.py art/sheets/<线稿图>.jpg 2 2 cat,fish,duck,bunny
+```
+
+脚本会去掉每格的方框、补上线条的小缺口，并给每块封闭区域编号，输出到 `public/art/coloring/`（`<id>.png` 线稿 + `<id>.regions.png` 区域图）。最后在 `src/content/coloring-pages.ts` 里加一行。

@@ -30,6 +30,7 @@ export const sections: Section[] = [
   { id: 'numbers', title: { zh: '认识数字', en: 'Numbers' }, icon: 'items/blocks', color: '#ffe8cc' },
   { id: 'cards', title: { zh: '认知卡片', en: 'Flashcards' }, icon: 'ui/cards', color: '#d0ebff' },
   { id: 'habit', title: { zh: '生活习惯', en: 'Good Habits' }, icon: 'items/toothbrush', color: '#c5f6fa' },
+  { id: 'art', title: { zh: '创意画板', en: 'Art' }, icon: 'ui/palette', color: '#ffd1dc' },
   { id: 'music', title: { zh: '儿歌音乐', en: 'Music' }, icon: 'ui/music', color: '#e5dbff' },
 ];
 
@@ -94,6 +95,12 @@ export const activities: Activity[] = [
   a('scrub-cars', 'habit', 'scrub', undefined, '洗车车', 'Car Wash', 'items/sponge', '#ffe8cc', { set: 'cars' }),
   a('cards-daily', 'habit', 'flashcards', 'daily', '家里的东西', 'Things at Home', 'items/cup', '#e5dbff'),
   a('find-daily', 'habit', 'listen-find', 'daily', '找一找', 'Find at Home', 'items/backpack', '#d3f9d8'),
+
+  // 创意画板
+  a('color-animals', 'art', 'coloring', undefined, '给动物涂色', 'Color Animals', 'items/butterfly', '#fff3bf', { set: 'animals' }),
+  a('color-things', 'art', 'coloring', undefined, '给东西涂色', 'Color Things', 'items/tulip', '#d3f9d8', { set: 'things' }),
+  a('doodle-animals', 'art', 'doodle', 'animals', '自由涂鸦', 'Doodle', 'ui/rainbow', '#d0ebff'),
+  a('doodle-ocean', 'art', 'doodle', 'ocean', '海底贴贴画', 'Ocean Stickers', 'items/dolphin', '#c5f6fa', { paper: '#e7f5ff' }),
 
   // 儿歌音乐
   a('piano-animals', 'music', 'piano', undefined, '动物钢琴', 'Piano', 'ui/piano', '#e5dbff'),

@@ -1,0 +1,50 @@
+.g-coloring {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 3vmin;
+  padding: calc(env(safe-area-inset-top) + var(--hb)) 3vw calc(env(safe-area-inset-bottom) + 3vmin);
+  --W: min(94vw, 100vh - var(--hb) - 34vmin);
+}
+.cl-board {
+  position: relative;
+  width: var(--W); height: var(--W);
+  flex: none;
+  border-radius: 6%;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+.cl-board.loading { opacity: .5; }
+.cl-fill, .cl-line { position: absolute; inset: 0; width: 100%; height: 100%; }
+.cl-fill { touch-action: none; cursor: pointer; }
+.cl-line { pointer-events: none; }
+
+.cl-palette {
+  display: grid;
+  grid-template-columns: repeat(5, var(--pb));
+  gap: 2.4vmin;
+  --pb: min(14vw, 11vh, 76px);
+}
+.cl-paint {
+  width: var(--pb); height: var(--pb);
+  border-radius: 50%;
+  background: radial-gradient(circle at 32% 30%, rgba(255, 255, 255, .55) 0 14%, transparent 15%), var(--c);
+  box-shadow: inset 0 -.6vmin 0 rgba(0, 0, 0, .12), var(--shadow);
+  border: .7vmin solid #fff;
+  cursor: pointer;
+  transition: scale .15s;
+}
+.cl-paint.on { scale: 1.22; box-shadow: 0 0 0 .8vmin #9775fa, var(--shadow); }
+.cl-next {
+  position: fixed;
+  top: calc(env(safe-area-inset-top) + 2vmin); right: 3vmin; left: auto;
+  color: #9775fa;
+}
+
+@media (orientation: landscape) {
+  .g-coloring {
+    flex-direction: row; gap: 5vw;
+    --W: min(100vh - var(--hb) - 6vmin, 100vw - 40vmin);
+  }
+  .cl-palette { grid-template-columns: repeat(2, var(--pb)); --pb: min(14vh, 9vw, 84px); }
+}

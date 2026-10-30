@@ -1,0 +1,40 @@
+.g-doodle {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: stretch;
+  gap: 2.5vmin;
+  padding: calc(env(safe-area-inset-top) + var(--hb)) 3vw calc(env(safe-area-inset-bottom) + 2.5vmin);
+  --tb: min(11vw, 8vh, 72px);
+}
+.dd-paper {
+  flex: 1; min-height: 0; width: 100%;
+  border-radius: 4vmin;
+  box-shadow: var(--shadow);
+  touch-action: none;
+  transition: opacity .45s, translate .45s;
+}
+.dd-paper.wipe { opacity: 0; translate: 0 -4vmin; }
+.dd-tools {
+  flex: none;
+  display: flex; flex-wrap: wrap; justify-content: center;
+  gap: 1.8vmin;
+}
+.dd-tool {
+  width: var(--tb); height: var(--tb);
+  border-radius: 50%;
+  border: .6vmin solid #fff;
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  transition: scale .15s;
+  display: grid; place-items: center;
+}
+.dd-paint { background: radial-gradient(circle at 32% 30%, rgba(255, 255, 255, .55) 0 14%, transparent 15%), var(--c); }
+.dd-rainbow { background: conic-gradient(#ff6b6b, #ffd43b, #69db7c, #4dabf7, #b197fc, #ff6b6b); }
+.dd-icon { background: #fff; font-size: calc(var(--tb) * .7); }
+.dd-tool.on { scale: 1.2; box-shadow: 0 0 0 .7vmin #9775fa, var(--shadow); }
+
+@media (orientation: landscape) {
+  .g-doodle { flex-direction: row; padding-left: calc(env(safe-area-inset-left) + 3vw); --tb: min(10vh, 7vw, 72px); }
+  /* 宽度只由布局决定（width: 0 + flex: 1），不能让画布内容尺寸反过来撑大布局，否则会和 ResizeObserver 互相触发 */
+  .dd-paper { height: 100%; width: 0; min-width: 0; }
+  .dd-tools { display: grid; grid-template-columns: repeat(2, var(--tb)); align-content: center; gap: 2vmin 2.4vmin; }
+}

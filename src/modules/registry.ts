@@ -100,6 +100,20 @@ export const modules: Record<string, ModuleManifest> = {
     levels: 3, // 数到 3 / 5 / 10
     load: () => import('./count-match'),
   },
+  coloring: {
+    id: 'coloring',
+    kind: 'tool',
+    skills: ['creativity', 'color-shape', 'fine-motor'],
+    levels: 1,
+    load: () => import('./coloring'),
+  },
+  doodle: {
+    id: 'doodle',
+    kind: 'tool',
+    skills: ['creativity', 'fine-motor'],
+    levels: 1,
+    load: () => import('./doodle'),
+  },
   piano: {
     id: 'piano',
     kind: 'game',
