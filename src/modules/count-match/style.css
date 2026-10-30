@@ -1,0 +1,22 @@
+.g-countmatch { gap: 4vmin; }
+.cm-q {
+  width: clamp(56px, 13vmin, 100px); height: clamp(56px, 13vmin, 100px);
+  display: grid; place-items: center;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: var(--shadow);
+  font-size: clamp(30px, 8vmin, 60px);
+  cursor: pointer;
+}
+/* 物品大小按行列数算：东西少就大，东西多就小 */
+.cm-objs { --sz: min(calc(86vw / var(--cols) * .85), calc(34vh / var(--rows) * .8), 22vh); }
+.cm-opts { --it: min(26vw, 17vh); gap: 5vmin; }
+@media (orientation: landscape) {
+  .g-countmatch { gap: 3vmin; }
+  .cm-q { display: none; }
+  .cm-objs { --sz: min(calc(80vw / var(--cols) * .85), calc(44vh / var(--rows) * .8), 26vh); }
+  .cm-opts { --it: min(16vw, 26vh) !important; flex-wrap: nowrap; }
+}
+.cm-opt { cursor: pointer; }
+.cm-opt.right { outline: 1.2vmin solid #7ed957; animation: cmHappy .6s ease-in-out 2; }
+@keyframes cmHappy { 50% { scale: 1.12; } }

@@ -86,6 +86,20 @@ export const modules: Record<string, ModuleManifest> = {
     levels: 1,
     load: () => import('./scrub'),
   },
+  'number-learn': {
+    id: 'number-learn',
+    kind: 'course',
+    skills: ['number', 'language', 'english'],
+    levels: 1,
+    load: () => import('./number-learn'),
+  },
+  'count-match': {
+    id: 'count-match',
+    kind: 'game',
+    skills: ['number', 'cognition'],
+    levels: 3, // 数到 3 / 5 / 10
+    load: () => import('./count-match'),
+  },
   piano: {
     id: 'piano',
     kind: 'game',

@@ -1,0 +1,37 @@
+.g-numlearn {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: calc(env(safe-area-inset-top) + var(--hb)) 2vw calc(env(safe-area-inset-bottom) + 3vmin);
+}
+.nl-stage {
+  flex: 1; height: 100%;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 4vmin;
+  min-width: 0;
+  touch-action: pan-y;
+}
+.nl-digit {
+  font-size: min(46vw, 30vh);
+  animation: float 2.4s ease-in-out infinite;
+  cursor: pointer;
+}
+@media (orientation: landscape) {
+  .nl-stage { flex-direction: row; gap: 4vw; }
+  .nl-stage .nl-grid { --sz: min(calc(44vw / var(--cols) * .85), calc(62vh / var(--rows) * .8), 26vh); }
+  .nl-digit { font-size: min(30vw, 58vh); }
+}
+/* 物品大小按行列数算：东西少就大，东西多就小 */
+.nl-grid { --sz: min(calc(66vw / var(--cols) * .85), calc(30vh / var(--rows) * .8), 20vh); }
+.nl-nav {
+  flex: none;
+  width: clamp(52px, 12vmin, 96px); height: clamp(52px, 12vmin, 96px);
+  display: grid; place-items: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .85);
+  box-shadow: var(--shadow);
+  color: #9775fa;
+  font-size: clamp(22px, 5vmin, 40px);
+  cursor: pointer;
+  z-index: 2;
+}
+.nl-nav:active { scale: .9; }

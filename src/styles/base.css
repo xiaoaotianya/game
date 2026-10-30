@@ -109,3 +109,34 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   100% { scale: 1.3; opacity: 0; }
 }
 @keyframes float { 50% { translate: 0 -1.2vmin; } }
+
+/* 数数用的物品阵列：像「十格框」一样一行最多 5 个，由模块设置 --cols / --sz */
+.count-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--cols), var(--sz));
+  gap: calc(var(--sz) * .14);
+  justify-content: center;
+}
+.count-obj {
+  width: var(--sz); height: var(--sz);
+  display: grid; place-items: center;
+  font-size: calc(var(--sz) * .86);
+  border-radius: 24%;
+  background: rgba(255, 255, 255, .7);
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  position: relative;
+  transition: scale .15s, background .2s;
+}
+.count-obj.pop-in { animation: countIn .35s cubic-bezier(.3, 1.5, .5, 1) both; }
+@keyframes countIn { from { scale: 0; } }
+.count-obj.counted { background: #fff3bf; scale: 1.06; }
+.count-obj .count-no {
+  position: absolute; right: -4%; top: -6%;
+  min-width: 38%; height: 38%;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  background: #ff8fab; color: #fff;
+  font: 800 calc(var(--sz) * .24) / 1 system-ui, sans-serif;
+  box-shadow: 0 .4vmin 0 rgba(0, 0, 0, .12);
+}

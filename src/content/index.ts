@@ -11,11 +11,12 @@ import body from './packs/body';
 import daily from './packs/daily';
 import nature from './packs/nature';
 import shapes from './packs/shapes';
+import numbers from './packs/numbers';
 import { ITEM_ART } from './art-manifest';
 import { artUrl } from '@/sdk/art';
 
 export const packs: Record<string, ContentPack> = {
-  animals, wild, vehicles, colorful, fruits, veggies, ocean, body, daily, nature, shapes,
+  animals, wild, vehicles, colorful, fruits, veggies, ocean, body, daily, nature, shapes, numbers,
 };
 
 // 有插画的条目自动挂上图片（同一 id 跨内容包共用一张图）
@@ -26,6 +27,7 @@ for (const p of Object.values(packs)) {
 export const sections: Section[] = [
   { id: 'games', title: { zh: '游戏乐园', en: 'Games' }, icon: 'ui/gamepad', color: '#ffd1dc' },
   { id: 'brain', title: { zh: '动动脑', en: 'Thinking' }, icon: 'items/owl', color: '#fff3bf' },
+  { id: 'numbers', title: { zh: '认识数字', en: 'Numbers' }, icon: 'items/blocks', color: '#ffe8cc' },
   { id: 'cards', title: { zh: '认知卡片', en: 'Flashcards' }, icon: 'ui/cards', color: '#d0ebff' },
   { id: 'habit', title: { zh: '生活习惯', en: 'Good Habits' }, icon: 'items/toothbrush', color: '#c5f6fa' },
   { id: 'music', title: { zh: '儿歌音乐', en: 'Music' }, icon: 'ui/music', color: '#e5dbff' },
@@ -47,7 +49,6 @@ export const activities: Activity[] = [
   a('puzzle-animals', 'games', 'puzzle', 'animals', '动物拼图', 'Animal Puzzle', 'ui/puzzle', '#ffe8cc'),
   a('puzzle-wild', 'games', 'puzzle', 'wild', '森林拼图', 'Forest Puzzle', 'items/fox', '#d3f9d8'),
   a('puzzle-ocean', 'games', 'puzzle', 'ocean', '海洋拼图', 'Ocean Puzzle', 'items/octopus', '#c5f6fa'),
-  a('feed-count', 'games', 'count-feed', undefined, '喂小动物', 'Feed Me', 'items/carrot', '#ffe3c2'),
 
   // 动动脑：观察、记忆、比较、分类
   a('memory-animals', 'brain', 'memory', 'animals', '动物翻翻乐', 'Animal Memory', 'items/owl', '#e5dbff'),
@@ -59,6 +60,16 @@ export const activities: Activity[] = [
   a('sort-colors', 'brain', 'sort-color', 'colorful', '颜色分类', 'Colors', 'ui/palette', '#fff3bf'),
   a('sort-fruits', 'brain', 'sort-color', 'fruits', '水果颜色', 'Fruit Colors', 'items/grapes', '#f3d9fa'),
   a('sort-veggies', 'brain', 'sort-color', 'veggies', '蔬菜颜色', 'Veggie Colors', 'items/pepper', '#d3f9d8'),
+
+  // 认识数字：先认、再数、再用
+  a('learn-animals', 'numbers', 'number-learn', 'animals', '认识数字', 'Learn Numbers', 'items/num1', '#ffe3e3', { unit: '只' }),
+  a('learn-fruits', 'numbers', 'number-learn', 'fruits', '水果数字', 'Fruit Numbers', 'items/num2', '#fff3bf'),
+  a('count-animals', 'numbers', 'count-match', 'animals', '数一数', 'How Many?', 'items/num3', '#d3f9d8', { unit: '只' }),
+  a('count-fruits', 'numbers', 'count-match', 'fruits', '数水果', 'Count Fruits', 'items/num5', '#d0ebff'),
+  a('feed-count', 'numbers', 'count-feed', undefined, '喂小动物', 'Feed Me', 'items/carrot', '#ffe3c2'),
+  a('find-numbers', 'numbers', 'listen-find', 'numbers', '找数字', 'Find Numbers', 'items/num4', '#e5dbff'),
+  a('balloons-numbers', 'numbers', 'balloons', 'numbers', '数字气球', 'Number Balloons', 'items/num7', '#f3d9fa'),
+  a('memory-numbers', 'numbers', 'memory', 'numbers', '数字翻翻乐', 'Number Memory', 'items/num8', '#ffd1dc'),
 
   // 认知卡片
   a('cards-animals', 'cards', 'flashcards', 'animals', '动物', 'Animals', 'items/dog', '#d3f9d8'),
