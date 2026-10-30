@@ -24,8 +24,7 @@ jobs:
         with:
           node-version: 24
           cache: npm
-      # 本地用 Windows + 内网镜像生成的 lock，在 Linux 上 npm ci 偶发 "Exit handler never called"，失败时回退到 npm install
-      - run: npm ci --no-audit --no-fund || (rm -rf node_modules && npm install --no-audit --no-fund)
+      - run: npm ci --no-audit --no-fund
       - run: npm run build
       - uses: actions/upload-pages-artifact@v3
         with:
