@@ -19,7 +19,24 @@ MIN_REGION = 0.0006  # 面积小于整页这个比例的碎块并入线条（不
 MARGIN = 0.06        # 画面四周留白
 
 
-def process(cell: Image.Image, size: int):
+def frame_band(comp: np.ndarray) -> np.ndarray:
+    """方框连通块里，属于四条边那一圈的像素（画如果挨着框，画本身不在这圈里，会保留下来）。"""
+    bh, bw = comp.shape
+    rows, cols = comp.mean(1) > 0.5, comp.mean(0) > 0.5
+
+    def depth(full: np.ndarray, n: int) -> int:
+        # 从这一边往里，最后一行「几乎整行都是线」的位置（框稍微歪一点也能找到）
+        hit = np.nonzero(full[:max(n // 6, 8)])[0]
+        return (hit.max() + 1 if len(hit) else 6) + 3
+
+    t, b, l, r = depth(rows, bh), depth(rows[::-1], bh), depth(cols, bw), depth(cols[::-1], bw)
+    band = np.zeros_like(comp)
+    band[:t] = band[-b:] = True
+    band[:, :l] = band[:, -r:] = True
+    return comp & band
+
+
+def process(cell: Image.Image, size: int, pid: str = ''):
     g = np.asarray(cell.convert('L'), dtype=np.float32)
     h, w = g.shape
     line = g < LINE_LEVEL
@@ -37,7 +54,16 @@ def process(cell: Image.Image, size: int):
         edge = (sl[0].stop < band * h or sl[0].start > (1 - band) * h
                 or sl[1].stop < band * w or sl[1].start > (1 - band) * w)
         if whole or edge:
-            m = ndimage.binary_dilation(lab == i, iterations=4)  # 连同抗锯齿的浅灰边一起擦掉
+            m = np.zeros_like(line)
+            if whole:
+                # 只擦方框那一圈；画挨着框时，整块连通的线条里画的部分要留下
+                m[sl] = frame_band(comp)
+                kept = int((comp & ~m[sl]).sum())
+                if kept > 0.002 * h * w:
+                    print(f'  注意 {pid}: 画挨着方框，已只去掉方框（保留 {kept} 像素），请检查轮廓是否闭合')
+            else:
+                m[sl] = comp
+            m = ndimage.binary_dilation(m, iterations=4)  # 连同抗锯齿的浅灰边一起擦掉
             line[m] = False
             g[m] = 255
     # 去掉噪点
@@ -50,6 +76,8 @@ def process(cell: Image.Image, size: int):
 
     # 按线条外接框裁剪成正方形，四周留白
     ys, xs = np.nonzero(line)
+    if not len(ys):
+        raise ValueError('格子里没有线条（空格子，或者画被当成方框去掉了）')
     y0, y1, x0, x1 = ys.min(), ys.max(), xs.min(), xs.max()
     side = int(max(y1 - y0, x1 - x0) * (1 + 2 * MARGIN))
     cy, cx = (y0 + y1) // 2, (x0 + x1) // 2
@@ -97,7 +125,11 @@ def main():
             continue
         r, c = divmod(k, cols)
         cell = im.crop((c * W // cols, r * H // rows, (c + 1) * W // cols, (r + 1) * H // rows))
-        line, reg, n = process(cell, size)
+        try:
+            line, reg, n = process(cell, size, pid)
+        except ValueError as e:
+            print(f'{pid}: 跳过，{e}')
+            continue
         line.save(OUT / f'{pid}.png', optimize=True)
         reg.save(OUT / f'{pid}.regions.png', optimize=True)
         print(f'{pid}: {n} regions')

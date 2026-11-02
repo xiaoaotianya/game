@@ -3,7 +3,7 @@
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   gap: 3vmin;
   padding: calc(env(safe-area-inset-top) + var(--hb)) 3vw calc(env(safe-area-inset-bottom) + 3vmin);
-  --W: min(94vw, 100vh - var(--hb) - 34vmin);
+  --W: min(94vw, 100vh - var(--hb) - 42vmin);
 }
 .cl-board {
   position: relative;
@@ -18,12 +18,18 @@
 .cl-fill, .cl-line { position: absolute; inset: 0; width: 100%; height: 100%; }
 .cl-fill { touch-action: none; cursor: pointer; }
 .cl-line { pointer-events: none; }
+.cl-retry {
+  position: absolute; inset: 0;
+  display: grid; place-items: center;
+  font-size: calc(var(--W) * .25);
+  cursor: pointer;
+}
 
 .cl-palette {
   display: grid;
   grid-template-columns: repeat(5, var(--pb));
   gap: 2.4vmin;
-  --pb: min(14vw, 11vh, 76px);
+  --pb: min(16vw, 12vh, 88px); /* 色块尽量大，2 岁小手好点 */
 }
 .cl-paint {
   width: var(--pb); height: var(--pb);
@@ -37,7 +43,8 @@
 .cl-paint.on { scale: 1.22; box-shadow: 0 0 0 .8vmin #9775fa, var(--shadow); }
 .cl-next {
   position: fixed;
-  top: calc(env(safe-area-inset-top) + 2vmin); right: 3vmin; left: auto;
+  top: calc(env(safe-area-inset-top) + 2vmin); right: calc(env(safe-area-inset-right) + 2vmin); left: auto;
+  display: grid; place-items: center;
   color: #9775fa;
 }
 

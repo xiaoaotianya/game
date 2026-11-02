@@ -2,8 +2,10 @@
   position: absolute; inset: 0;
   display: flex; flex-direction: column; align-items: stretch;
   gap: 2.5vmin;
-  padding: calc(env(safe-area-inset-top) + var(--hb)) 3vw calc(env(safe-area-inset-bottom) + 2.5vmin);
-  --tb: min(11vw, 8vh, 72px);
+  /* 顶部多留 2vmin，和返回键错开（同 .g-board） */
+  padding: calc(env(safe-area-inset-top) + var(--hb) + 2vmin) calc(env(safe-area-inset-right) + 3vw)
+    calc(env(safe-area-inset-bottom) + 2.5vmin) calc(env(safe-area-inset-left) + 3vw);
+  --tb: clamp(48px, min(17vw, 8.5vh), 88px); /* 尽量接近 80px 的点击区，手机上放不下就按屏幕缩 */
 }
 .dd-paper {
   flex: 1; min-height: 0; width: 100%;
@@ -31,10 +33,14 @@
 .dd-rainbow { background: conic-gradient(#ff6b6b, #ffd43b, #69db7c, #4dabf7, #b197fc, #ff6b6b); }
 .dd-icon { background: #fff; font-size: calc(var(--tb) * .7); }
 .dd-tool.on { scale: 1.2; box-shadow: 0 0 0 .7vmin #9775fa, var(--shadow); }
+.dd-clear {
+  left: auto; right: calc(env(safe-area-inset-right) + 2vmin);
+  display: grid; place-items: center;
+}
 
 @media (orientation: landscape) {
-  .g-doodle { flex-direction: row; padding-left: calc(env(safe-area-inset-left) + 3vw); --tb: min(10vh, 7vw, 72px); }
+  .g-doodle { flex-direction: row; --tb: min(16vh, 9vw, 88px); }
   /* 宽度只由布局决定（width: 0 + flex: 1），不能让画布内容尺寸反过来撑大布局，否则会和 ResizeObserver 互相触发 */
   .dd-paper { height: 100%; width: 0; min-width: 0; }
-  .dd-tools { display: grid; grid-template-columns: repeat(2, var(--tb)); align-content: center; gap: 2vmin 2.4vmin; }
+  .dd-tools { display: grid; grid-template-columns: repeat(3, var(--tb)); align-content: center; gap: 2vmin 2.4vmin; }
 }

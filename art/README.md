@@ -48,7 +48,17 @@ src/content/art-manifest.ts   已有插画的 id 列表（切图后重新生成�
 线稿也用 Seedream 生成（2×2 网格，提示词要写明：纯黑粗线、轮廓闭合、大块区域、身体上不要画分割线、不填色）。生成后运行：
 
 ```
-python art/coloring.py art/sheets/<线稿图>.jpg 2 2 cat,fish,duck,bunny
+python art/coloring.py art/sheets/<线稿图>.jpg 2 2 <id1>,<id2>,<id3>,<id4>
 ```
+
+现有三张图集的实际命令：
+
+```
+python art/coloring.py art/sheets/color-animals1.jpg 2 2 cat,fish,elephant,bunny
+python art/coloring.py art/sheets/color-animals2.jpg 2 2 butterfly,duck,turtle,pig
+python art/coloring.py art/sheets/color-things.jpg 2 2 car,house,flower,rocket
+```
+
+最后的 id 列表要按**这张图集里实际画的东西**，从左到右、从上到下依次填写（上面只是格式示例，不是哪张图集的真实顺序）；不需要的格子写 `-`。同名 id 会直接覆盖 `public/art/coloring/` 里已有的页面，运行前先看一眼图集，别把别的页面盖掉。
 
 脚本会去掉每格的方框、补上线条的小缺口，并给每块封闭区域编号，输出到 `public/art/coloring/`（`<id>.png` 线稿 + `<id>.regions.png` 区域图）。最后在 `src/content/coloring-pages.ts` 里加一行。

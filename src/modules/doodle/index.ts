@@ -15,6 +15,7 @@ export default function create(): ModuleImpl {
   let pack: ContentPack;
   let paper = '#ffffff';
   let tool = 0; // >= 0 是颜料下标
+  let pen = 0; // 最近选的笔（颜料下标或 RAINBOW）：画到一半切到贴纸，这一笔接着用它
   let cv: HTMLCanvasElement;
   let cx: CanvasRenderingContext2D;
   let tools: HTMLElement;
@@ -24,6 +25,10 @@ export default function create(): ModuleImpl {
   const images = new Map<string, HTMLImageElement>();
   const strokes = new Map<number, { x: number; y: number }>();
   let ro: ResizeObserver;
+  let wiping = false;
+  // 转屏前的画：只在转屏后又画过才重新截一张，来回转屏不会越转越糊
+  let snap: HTMLCanvasElement | null = null;
+  let dirty = false;
 
   const dpr = () => Math.min(devicePixelRatio || 1, 2);
   const brush = () => Math.max(10, Math.min(cv.width, cv.height) * 0.028);
@@ -32,16 +37,23 @@ export default function create(): ModuleImpl {
     const r = cv.getBoundingClientRect();
     const w = Math.round(r.width * dpr()), hgt = Math.round(r.height * dpr());
     if (!w || !hgt || (w === cv.width && hgt === cv.height)) return;
-    // 转屏 / 改尺寸时保留已经画的内容
-    const old = document.createElement('canvas');
-    old.width = cv.width;
-    old.height = cv.height;
-    old.getContext('2d')!.drawImage(cv, 0, 0);
+    // 转屏 / 改尺寸时保留已经画的内容：等比缩放、居中，不拉变形
+    if (dirty) {
+      snap = document.createElement('canvas');
+      snap.width = cv.width;
+      snap.height = cv.height;
+      snap.getContext('2d')!.drawImage(cv, 0, 0);
+      dirty = false;
+    }
     cv.width = w;
     cv.height = hgt;
     cx.fillStyle = paper;
     cx.fillRect(0, 0, w, hgt);
-    if (old.width) cx.drawImage(old, 0, 0, w, hgt);
+    if (snap) {
+      const k = Math.min(w / snap.width, hgt / snap.height);
+      const dw = snap.width * k, dh = snap.height * k;
+      cx.drawImage(snap, (w - dw) / 2, (hgt - dh) / 2, dw, dh);
+    }
   }
 
   function pos(e: PointerEvent) {
@@ -50,11 +62,11 @@ export default function create(): ModuleImpl {
   }
 
   function color() {
-    if (tool === RAINBOW) {
+    if (pen === RAINBOW) {
       hue = (hue + 4) % 360;
       return `hsl(${hue} 90% 62%)`;
     }
-    return PAINTS[tool].hex;
+    return PAINTS[pen].hex;
   }
 
   function dot(x: number, y: number) {
@@ -62,18 +74,28 @@ export default function create(): ModuleImpl {
     cx.beginPath();
     cx.arc(x, y, brush() / 2, 0, Math.PI * 2);
     cx.fill();
+    dirty = true;
   }
 
   function stamp(x: number, y: number) {
-    const it: PackItem = pick(pack.items.filter((i) => i.image));
-    const img = images.get(it.id);
-    if (!img?.complete) return;
+    // 只从已经加载好的贴纸里挑（加载失败的图 complete 也是 true，要看 naturalWidth）
+    const ready = pack.items.filter((i) => {
+      const im = i.image && images.get(i.id);
+      return im && im.complete && im.naturalWidth > 0;
+    });
+    if (!ready.length) return;
+    const it: PackItem = pick(ready);
+    const img = images.get(it.id)!;
     const s = Math.min(cv.width, cv.height) * 0.22;
     cx.save();
-    cx.translate(x, y);
-    cx.rotate((Math.random() - 0.5) * 0.5);
-    cx.drawImage(img, -s / 2, -s / 2, s, s);
-    cx.restore();
+    try {
+      cx.translate(x, y);
+      cx.rotate((Math.random() - 0.5) * 0.5);
+      cx.drawImage(img, -s / 2, -s / 2, s, s);
+    } finally {
+      cx.restore();
+    }
+    dirty = true;
     sdk.sfx.pop();
     sdk.say(it.name);
     count();
@@ -85,6 +107,7 @@ export default function create(): ModuleImpl {
 
   function select(t: number) {
     tool = t;
+    if (t !== STAMP) pen = t;
     tools.querySelectorAll<HTMLElement>('[data-tool]').forEach((el) => el.classList.toggle('on', Number(el.dataset.tool) === t));
     sdk.sfx.ding(t < 0 ? 6 : t % 8);
     if (t >= 0) sdk.say(PAINTS[t]);
@@ -93,11 +116,16 @@ export default function create(): ModuleImpl {
   }
 
   function clear() {
+    if (wiping) return; // 连点海绵只擦一次
+    wiping = true;
     sdk.sfx.boing();
     cv.classList.add('wipe');
     sdk.later(() => {
+      wiping = false;
       cx.fillStyle = paper;
       cx.fillRect(0, 0, cv.width, cv.height);
+      snap = null;
+      dirty = false;
       cv.classList.remove('wipe');
       sdk.say({ zh: '擦干净啦，再画一张吧', en: 'All clean! Draw again!' });
     }, 450);
@@ -131,16 +159,16 @@ export default function create(): ModuleImpl {
       const first = pack.items.find((i) => i.image);
       const sticker = h('dd-tool dd-icon emoji', iconHtml(first ? 'items/' + first.id : 'items/star'));
       sticker.dataset.tool = String(STAMP);
-      const sponge = h('dd-tool dd-icon emoji', iconHtml('items/sponge'));
-      tools.append(rainbow, sticker, sponge);
+      tools.append(rainbow, sticker);
       tools.addEventListener('click', (e) => {
         const t = (e.target as HTMLElement).closest<HTMLElement>('.dd-tool');
-        if (!t) return;
-        if (t === sponge) clear();
-        else select(Number(t.dataset.tool));
+        if (t) select(Number(t.dataset.tool));
       });
       tools.querySelector('[data-tool="0"]')!.classList.add('on');
-      el.append(cv, tools);
+      // 海绵会擦掉整张画，单独放在右上角，不和颜料、贴纸挨着，免得误点
+      const sponge = h('dd-clear round-btn emoji', iconHtml('items/sponge'));
+      sponge.addEventListener('click', clear);
+      el.append(cv, tools, sponge);
 
       ro = new ResizeObserver(fit);
       ro.observe(cv);
@@ -168,6 +196,7 @@ export default function create(): ModuleImpl {
         cx.moveTo(last.x, last.y);
         cx.lineTo(p.x, p.y);
         cx.stroke();
+        dirty = true;
         strokes.set(e.pointerId, p);
         // 画的时候轻轻响，越往上音越高
         if (performance.now() - lastNote > 160) {
