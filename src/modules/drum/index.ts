@@ -1,12 +1,11 @@
 // 小鼓手：大鼓、小鼓、镲、沙锤。
 // mode=free 自由敲，小动物跟着跳舞；mode=echo「跟我敲」：先演示一段节奏，宝宝照着敲。难度 0/1/2 = 2/3/4 下
-import type { ModuleImpl, SDK } from '@/sdk';
-import { h, pick, rand } from '@/sdk/dom';
+import type { DrumKind, ModuleImpl, SDK } from '@/sdk';
+import { h, pick, rand, shuffle } from '@/sdk/dom';
 import { iconHtml } from '@/sdk/art';
 import './style.css';
 
-type Kind = 'big' | 'snare' | 'cymbal' | 'shaker';
-const INSTR: { kind: Kind; zh: string; en: string }[] = [
+const INSTR: { kind: DrumKind; zh: string; en: string }[] = [
   { kind: 'big', zh: '大鼓', en: 'big drum' },
   { kind: 'snare', zh: '小鼓', en: 'snare drum' },
   { kind: 'cymbal', zh: '镲', en: 'cymbal' },
@@ -14,6 +13,8 @@ const INSTR: { kind: Kind; zh: string; en: string }[] = [
 ];
 const DANCERS = ['bear', 'bunny', 'monkey', 'cat', 'dog', 'panda', 'chick', 'frog'].map((id) => iconHtml('items/' + id));
 const GAP = 650;
+/** 跟我敲时，两次判定之间至少间隔这么久，手掌拍一下的多个触点只算一下 */
+const SLAP_MS = 120;
 
 export default function create(): ModuleImpl {
   let sdk: SDK;
@@ -27,6 +28,8 @@ export default function create(): ModuleImpl {
   let pos = 0;
   let locked = false;
   let mistakes = 0;
+  const touching = new Set<number>();
+  let lastJudge = 0;
 
   function strike(i: number) {
     const p = pads[i];
@@ -42,13 +45,18 @@ export default function create(): ModuleImpl {
     sdk.fx.floatUp(c.x, c.y, pick(['🎵', '🎶', '✨']));
   }
 
-  function tap(i: number) {
+  function tap(i: number, extra: boolean) {
     if (locked) return;
-    strike(i);
     if (!echo) {
+      strike(i);
       if (++hits % 8 === 0) dancer.innerHTML = pick(DANCERS);
       return;
     }
+    // 第二根手指 / 手掌的其余触点：不出声、不判定
+    const now = Date.now();
+    if (extra || now - lastJudge < SLAP_MS) return;
+    lastJudge = now;
+    strike(i);
     if (!seq.length) return;
     if (i === seq[pos]) {
       pads[i].classList.add('ok');
@@ -93,7 +101,7 @@ export default function create(): ModuleImpl {
     mistakes = 0;
     locked = true;
     // 用到的乐器不超过 3 种，避免太难
-    const pool = [0, 1, 2, 3].sort(() => Math.random() - 0.5).slice(0, len <= 2 ? 2 : 3);
+    const pool = shuffle([0, 1, 2, 3]).slice(0, len <= 2 ? 2 : 3);
     seq = Array.from({ length: len }, () => pool[rand(pool.length)]);
     if (seq.every((x) => x === seq[0])) seq[seq.length - 1] = pool.find((x) => x !== seq[0])!;
     dancer.innerHTML = pick(DANCERS);
@@ -107,13 +115,19 @@ export default function create(): ModuleImpl {
       s = el;
       echo = ctx.activity.params?.mode === 'echo';
       s.classList.add('g-drum');
+      // 记录按在屏幕上的手指（捕获阶段先于乐器的处理）
+      s.addEventListener('pointerdown', (e) => touching.add(e.pointerId), true);
+      const lift = (e: PointerEvent) => touching.delete(e.pointerId);
+      s.addEventListener('pointerup', lift);
+      s.addEventListener('pointercancel', lift);
+      s.addEventListener('pointerleave', lift);
       dancer = h('dr-dancer emoji', pick(DANCERS));
       const kit = h('dr-kit');
       pads = INSTR.map((ins, i) => {
         const p = h(`dr-pad dr-${ins.kind}`, '<div class="dr-shape"></div>');
         p.addEventListener('pointerdown', (e) => {
           try { p.releasePointerCapture(e.pointerId); } catch { /* 忽略 */ }
-          tap(i);
+          tap(i, touching.size > 1);
         });
         kit.appendChild(p);
         return p;

@@ -53,7 +53,9 @@
   background: radial-gradient(ellipse at 50% 40%, #fff3bf 0 10%, #fcc419 12% 60%, #e67700 62% 100%);
   box-shadow: 0 1vmin 0 rgba(0, 0, 0, .1);
 }
-.dr-cymbal .dr-shape::after { content: ''; position: absolute; left: 47%; top: 80%; width: 6%; height: 150%; background: #868e96; border-radius: 1vmin; z-index: -1; }
+/* 支架画在乐器格上、镲片下面，敲击时也不会跑到镲片前面 */
+.dr-cymbal::before { content: ''; position: absolute; left: 48%; top: 48%; width: 4%; height: 40%; background: #868e96; border-radius: 1vmin; }
+.dr-cymbal .dr-shape { z-index: 1; }
 .dr-pad.dr-cymbal.hit .dr-shape { animation: drTilt .4s ease-out; }
 @keyframes drTilt { 30% { rotate: -14deg; } 60% { rotate: 8deg; } }
 /* 沙锤：彩色椭圆 + 手柄 */

@@ -22,6 +22,6 @@
 @keyframes scPop { 0% { scale: .8; } 50% { scale: 1.12; } }
 .sc-finger {
   position: absolute; left: 30%; top: 55%; font-size: calc(var(--cs) * .2);
-  pointer-events: none; animation: scRub 1.6s ease-in-out;
+  pointer-events: none; animation: scFinger 1.6s ease-in-out;
 }
-@keyframes scRub { 25% { translate: 30% -10%; } 50% { translate: -10% 0; } 75% { translate: 30% -10%; } }
+@keyframes scFinger { 25% { translate: 30% -10%; } 50% { translate: -10% 0; } 75% { translate: 30% -10%; } }

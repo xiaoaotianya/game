@@ -19,10 +19,13 @@ export default function create(): ModuleImpl {
   let got = 0;
   let paused = false;
   let gen = 0; // 每轮递增，旧轮的定时回调直接作废
+  let tok = 0; // 每次探头一个编号，过期的「缩回去」定时器不会误伤后来者
+  let missed = 0; // 没点到就缩回去的次数，作为本轮失误上报
 
   function setup() {
     gen++;
     got = 0;
+    missed = 0;
     paused = false;
     const n = HOLES[sdk.progress.level()] ?? 3;
     s.innerHTML = '';
@@ -49,23 +52,28 @@ export default function create(): ModuleImpl {
       const hole = pick(free);
       const it = pick(items);
       hole.querySelector('.pk-who')!.innerHTML = pic(it);
+      const t = String(++tok);
       hole.dataset.id = it.id;
-      hole.classList.remove('hit');
+      hole.dataset.tok = t;
       hole.classList.add('up');
       const stay = 2600 - sdk.progress.level() * 500;
       sdk.later(() => {
-        if (g === gen && hole.dataset.id === it.id && !hole.classList.contains('hit')) hide(hole);
+        if (g !== gen || paused || hole.dataset.tok !== t || hole.classList.contains('hit')) return;
+        missed++;
+        hide(hole);
       }, stay);
     }
     sdk.later(() => g === gen && spawn(), 700 + rand(900));
   }
 
   function hide(hole: HTMLElement) {
-    hole.classList.remove('up', 'glow');
+    hole.classList.remove('up', 'hit', 'glow');
     delete hole.dataset.id;
+    delete hole.dataset.tok;
   }
 
   function tap(hole: HTMLElement) {
+    if (paused) return; // 本轮已满 10 颗星，等庆祝
     const id = hole.dataset.id;
     if (!hole.classList.contains('up') || !id || hole.classList.contains('hit')) {
       sdk.sfx.note(pick(SCALE) / 2);
@@ -84,7 +92,8 @@ export default function create(): ModuleImpl {
     sdk.later(() => g === gen && hide(hole), 900);
     if (got >= GOAL) {
       paused = true;
-      sdk.progress.round({ mistakes: 0 });
+      // 溜走的次数折半计失误：偶尔没点到不降级，总是跟不上才降
+      sdk.progress.round({ mistakes: Math.floor(missed / 2) });
       sdk.later(() => g === gen && sdk.reward.celebrate(setup), 1100);
     }
   }

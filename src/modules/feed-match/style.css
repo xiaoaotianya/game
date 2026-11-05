@@ -30,3 +30,23 @@
 @keyframes fmMunch { 50% { scale: 1.08 .92; } }
 .fm-spot .tile.fm-home { animation: fmBounce .7s .4s ease-in-out 2; }
 @keyframes fmBounce { 50% { translate: 0 -25%; } }
+/* CSS 画的场景：大小与插画一致（1em × 1em） */
+.fm-css { display: inline-block; width: 1em; height: 1em; vertical-align: middle; position: relative; }
+/* 池塘：扁扁的水面 + 浅色岸边 + 两片荷叶 + 芦苇 */
+.fm-css-pond {
+  background:
+    radial-gradient(ellipse 13% 6% at 34% 66%, #2f9e44 0 85%, transparent 100%),
+    radial-gradient(ellipse 10% 5% at 66% 74%, #2f9e44 0 85%, transparent 100%),
+    radial-gradient(ellipse 22% 3% at 50% 58%, rgba(255, 255, 255, .75) 0 70%, transparent 100%),
+    radial-gradient(ellipse 44% 20% at 50% 68%, #4dabf7 0 80%, #a5d8ff 84%, #d8b98a 88% 96%, transparent 100%);
+}
+.fm-css-pond::before, .fm-css-pond::after { /* 芦苇 */
+  content: ''; position: absolute; bottom: 36%; width: 5%; height: 38%;
+  border-radius: 1em 1em 0 0;
+  background: linear-gradient(#a0522d 0 28%, #66a80f 28%);
+}
+.fm-css-pond::before { left: 14%; rotate: -10deg; }
+.fm-css-pond::after { right: 14%; height: 30%; rotate: 8deg; }
+/* 4 对时下排方块按 4 个算尺寸，拖走一个后也不变大（通用规则用 :has 数子元素，会随数量变化） */
+.g-fm .fm-many { --it: min(20vw, 14vh); }
+@media (orientation: landscape) { .g-fm .fm-many { --it: min(15vw, 26vh); } }

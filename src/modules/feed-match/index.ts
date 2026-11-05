@@ -6,6 +6,10 @@ import { iconHtml } from '@/sdk/art';
 import { PAIR_SETS, type Pair } from '@/content/pairs';
 import './style.css';
 
+/** 'css:pond' 这类场景用 CSS 画，其余走插画 / emoji */
+const art = (icon: string) =>
+  icon.startsWith('css:') ? `<span class="fm-css fm-css-${icon.slice(4)}"></span>` : iconHtml(icon);
+
 export default function create(): ModuleImpl {
   let sdk: SDK;
   let s: HTMLElement;
@@ -28,15 +32,15 @@ export default function create(): ModuleImpl {
     const drag = (p: Pair) => (home ? p.a : p.b);
     const dragName = (p: Pair) => (home ? p.aName : p.bName);
 
-    const top = h('row fm-top'), bot = h('row fm-bot');
+    const top = h('row fm-top'), bot = h(n >= 4 ? 'row fm-bot fm-many' : 'row fm-bot');
     shuffle(picks).forEach((p) => {
-      const t = h('fm-target', `<span class="fm-face emoji">${iconHtml(tgt(p))}</span><span class="fm-spot"></span>`);
+      const t = h('fm-target', `<span class="fm-face emoji">${art(tgt(p))}</span><span class="fm-spot"></span>`);
       t.dataset.id = p.id;
       t.addEventListener('pointerdown', () => !t.classList.contains('done') && sdk.say(home ? p.bName : p.aName));
       top.appendChild(t);
     });
     shuffle(picks).forEach((p) => {
-      const t = h('tile emoji', iconHtml(drag(p)));
+      const t = h('tile emoji', art(drag(p)));
       t.dataset.id = p.id;
       bot.appendChild(t);
       sdk.input.draggable(t, {
@@ -68,6 +72,8 @@ export default function create(): ModuleImpl {
       });
     });
     s.append(top, bot);
+    // 锁住下排高度：东西拖走后布局不跳
+    bot.style.minHeight = bot.offsetHeight + 'px';
   }
 
   return {

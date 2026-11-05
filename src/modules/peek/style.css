@@ -32,10 +32,11 @@
   box-shadow: 0 .6vmin 0 var(--rim);
 }
 /* 洞口窗：动物从洞口中线往上钻出来 */
-.pk-win { position: absolute; left: 0; right: 0; bottom: 24%; height: 110%; overflow: hidden; z-index: 1; }
+/* 窗口不超出洞的格子，避免盖住上一排的洞、抢走点击 */
+.pk-win { position: absolute; left: 0; right: 0; top: 0; bottom: 24%; overflow: hidden; z-index: 1; }
 .pk-who {
   position: absolute; left: 50%; bottom: 0;
-  font-size: calc(var(--hs) * .66);
+  font-size: calc(var(--hs) * .62);
   transform: translate(-50%, 110%);
   transition: transform .28s cubic-bezier(.3, 1.4, .5, 1);
 }

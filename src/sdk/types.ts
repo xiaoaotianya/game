@@ -20,6 +20,9 @@ export type SkillId =
   | 'creativity'  // 创造
   | 'habit';      // 生活习惯
 
+/** 合成打击乐音色 */
+export type DrumKind = 'big' | 'snare' | 'cymbal' | 'shaker';
+
 export type ColorId = 'red' | 'yellow' | 'blue' | 'green' | 'orange' | 'purple';
 
 // ---------------- 内容层 ----------------
@@ -115,7 +118,7 @@ export interface SDK {
     boing(): void;
     win(): void;
     note(freq: number): void;
-    drum(kind: 'big' | 'snare' | 'cymbal' | 'shaker'): void;
+    drum(kind: DrumKind): void;
   };
   buzz(ms?: number): void;
   /** 定时器，离开模块时自动清理 */

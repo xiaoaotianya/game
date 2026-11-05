@@ -5,7 +5,7 @@ export interface Pair {
   id: string;
   /** 动物（目标）图标 */
   a: string;
-  /** 东西（拖拽块）图标 */
+  /** 东西（拖拽块）图标；'css:xxx' 表示用 CSS 画的场景（见 feed-match 的 .fm-css-xxx） */
   b: string;
   aName: Text;
   bName: Text;
@@ -33,8 +33,8 @@ export const PAIR_SETS: Record<string, Pair[]> = {
     p('parrot', 'items/parrot', 'items/tree', '鹦鹉', 'parrot', '大树', 'tree', '鹦鹉飞回大树上', 'The parrot flies to the tree'),
     p('bee', 'items/bee', 'items/sunflower', '蜜蜂', 'bee', '花朵', 'flower', '蜜蜂飞到花朵上', 'The bee lands on the flower'),
     p('dog', 'items/dog', 'ui/house', '小狗', 'puppy', '房子', 'house', '小狗回家啦', 'The puppy goes home'),
-    p('penguin', 'items/penguin', 'items/snowman', '企鹅', 'penguin', '冰雪', 'snow', '企鹅住在冰雪里', 'The penguin lives in the snow'),
-    p('caterpillar', 'items/caterpillar', 'items/leaf', '毛毛虫', 'caterpillar', '树叶', 'leaf', '毛毛虫爬到树叶上', 'The caterpillar climbs on the leaf'),
-    p('frog', 'items/frog', '🪷', '青蛙', 'frog', '池塘', 'pond', '青蛙跳进池塘里', 'The frog jumps into the pond'),
+    p('penguin', 'items/penguin', '❄️', '企鹅', 'penguin', '冰天雪地', 'snowy land', '企鹅住在冰天雪地里', 'The penguin lives where it snows'),
+    p('caterpillar', 'items/caterpillar', 'items/cabbage', '毛毛虫', 'caterpillar', '菜叶', 'cabbage', '毛毛虫爬到菜叶上', 'The caterpillar climbs on the cabbage'),
+    p('frog', 'items/frog', 'css:pond', '青蛙', 'frog', '池塘', 'pond', '青蛙跳进池塘里', 'The frog jumps into the pond'),
   ],
 };

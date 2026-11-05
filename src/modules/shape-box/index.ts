@@ -42,11 +42,13 @@ export default function create(): ModuleImpl {
         onTap: () => sdk.say(it.name),
         onDrop: (x) => {
           t.dataset.locked = '1';
-          sdk.input.flyTo(t, x, 'sb-in', () => {
-            t.remove();
+          // 飞到洞口（0.4s）后再缩小掉进去（style.css 里 sbDrop 0.38s 起播 0.4s），播完才移除
+          sdk.input.flyTo(t, x, 'sb-in');
+          sdk.later(() => {
             sdk.sfx.drum('big');
             sdk.fx.wiggle(box);
-          });
+          }, 450);
+          sdk.later(() => t.remove(), 820);
           sdk.sfx.ding(blocks.length - left);
           sdk.buzz();
           sdk.say(it.name);
@@ -64,6 +66,8 @@ export default function create(): ModuleImpl {
         },
       });
     });
+    // 锁住托盘高度：方块少了托盘也不缩，盒子不会在一轮中途跳动
+    tray.style.minHeight = tray.offsetHeight + 'px';
   }
 
   return {

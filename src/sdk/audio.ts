@@ -1,4 +1,5 @@
 // 合成音效（Web Audio），无需音频素材
+import type { DrumKind } from './types';
 
 let ctx: AudioContext | null = null;
 
@@ -47,8 +48,6 @@ function noise(dur: number, vol: number, filter: BiquadFilterType, freq: number,
   src.start(t0);
   src.stop(t0 + dur + 0.05);
 }
-
-export type DrumKind = 'big' | 'snare' | 'cymbal' | 'shaker';
 
 export const sfx = {
   pop: () => tone(500, 0.12, 'sine', 0.35, 0, 1400),
