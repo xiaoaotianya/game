@@ -1,0 +1,163 @@
+/* CSS 画的表情脸：整体 1em × 1em，内部全部用 em，跟随 font-size */
+.emo-face {
+  --ink: #3d2c3a;
+  --mouth: #8f2d56;
+  position: relative;
+  display: inline-block;
+  width: 1em; height: 1em;
+  vertical-align: middle;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 32% 26%, rgba(255, 255, 255, .55) 0 .09em, transparent .2em),
+    radial-gradient(circle at 50% 40%, transparent 55%, rgba(0, 0, 0, .07) 100%),
+    var(--c);
+  box-shadow: inset 0 0 0 .03em var(--ink);
+  pointer-events: none;
+}
+.emo-face > i {
+  position: absolute;
+  display: block;
+  box-sizing: border-box;
+  transform: translate(-50%, -50%);
+}
+.emo-face .l { left: 32%; }
+.emo-face .r { left: 68%; }
+
+/* ---------- 默认部件 ---------- */
+.emo-brow { top: 27%; width: .17em; height: .045em; border-radius: .03em; background: var(--ink); }
+.emo-eye {
+  top: 45%; width: .11em; height: .15em; border-radius: 50%;
+  background: radial-gradient(circle at 36% 30%, #fff 0 .018em, transparent .024em), var(--ink);
+}
+.emo-mouth { left: 50%; top: 68%; }
+.emo-blush {
+  top: 60%; width: .17em; height: .1em; border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(255, 107, 129, .55), rgba(255, 107, 129, 0));
+}
+.emo-face .emo-blush.l { left: 19%; }
+.emo-face .emo-blush.r { left: 81%; }
+/* 泪滴 / 汗滴：尖头朝上的水滴 */
+.emo-face > .emo-tear, .emo-face > .emo-sweat {
+  width: .1em; height: .1em;
+  border-radius: 0 50% 50% 50%;
+  background: radial-gradient(circle at 60% 60%, #fff 0 .012em, transparent .02em), #4dabf7;
+  box-shadow: 0 0 0 .016em #fff;
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+/* ---------- 开心：弯眼笑 + 大笑嘴 + 脸红 ---------- */
+.emo-happy .emo-brow { top: 25%; width: .14em; }
+.emo-happy .emo-brow.l { transform: translate(-50%, -50%) rotate(-8deg); }
+.emo-happy .emo-brow.r { transform: translate(-50%, -50%) rotate(8deg); }
+.emo-happy .emo-eye {
+  top: 46%; width: .16em; height: .14em;
+  background: none;
+  border: .045em solid transparent; border-top-color: var(--ink);
+  border-radius: 50%;
+}
+.emo-happy .emo-mouth {
+  top: 68%; width: .38em; height: .2em;
+  border: .035em solid var(--ink);
+  border-radius: .02em .02em .2em .2em;
+  background: radial-gradient(ellipse 38% 50% at 50% 100%, #ff8fab 0 98%, transparent 100%), var(--mouth);
+}
+
+/* ---------- 难过：八字眉 + 下弯嘴 + 一滴泪 ---------- */
+.emo-sad .emo-brow { top: 29%; }
+.emo-sad .emo-brow.l { transform: translate(-50%, -50%) rotate(-22deg); }
+.emo-sad .emo-brow.r { transform: translate(-50%, -50%) rotate(22deg); }
+.emo-sad .emo-eye { top: 46%; height: .13em; }
+.emo-sad .emo-mouth {
+  top: 76%; width: .3em; height: .16em;
+  border: .045em solid transparent; border-top-color: var(--ink);
+  border-radius: 50%;
+}
+.emo-sad .emo-tear { left: 70%; top: 61%; }
+
+/* ---------- 生气：倒八字眉 + 咬牙嘴 + 红脸 ---------- */
+.emo-angry .emo-brow { top: 32%; width: .2em; height: .055em; }
+.emo-angry .emo-brow.l { transform: translate(-50%, -50%) rotate(24deg); }
+.emo-angry .emo-brow.r { transform: translate(-50%, -50%) rotate(-24deg); }
+.emo-angry .emo-eye { top: 46%; height: .12em; }
+.emo-angry .emo-mouth {
+  top: 70%; width: .32em; height: .12em;
+  border: .035em solid var(--ink);
+  border-radius: .05em;
+  background:
+    linear-gradient(transparent calc(50% - .008em), rgba(61, 44, 58, .55) calc(50% - .008em) calc(50% + .008em), transparent calc(50% + .008em)),
+    repeating-linear-gradient(90deg, #fff 0 .06em, rgba(61, 44, 58, .55) .06em .075em),
+    #fff;
+}
+.emo-angry .emo-blush { width: .2em; height: .12em; background: radial-gradient(closest-side, rgba(224, 49, 49, .5), rgba(224, 49, 49, 0)); }
+
+/* ---------- 害怕：张大眼 + 担心眉 + 波浪嘴 + 汗滴 ---------- */
+.emo-scared .emo-brow { top: 22%; width: .15em; height: .04em; }
+.emo-scared .emo-brow.l { transform: translate(-50%, -50%) rotate(-18deg); }
+.emo-scared .emo-brow.r { transform: translate(-50%, -50%) rotate(18deg); }
+.emo-scared .emo-eye,
+.emo-surprised .emo-eye {
+  top: 44%; width: .2em; height: .22em;
+  border: .03em solid var(--ink);
+  background: radial-gradient(circle at 50% 52%, var(--ink) 0 .032em, transparent .036em), #fff;
+}
+/* 波浪：上半圆弧和下半圆弧两排交错拼成，半径 .035em，线宽 .035em */
+.emo-scared .emo-mouth {
+  top: 71%; width: .42em; height: .105em;
+  background:
+    radial-gradient(circle at 50% 100%, transparent .0175em, var(--ink) .019em .051em, transparent .0525em) 0 0 / .14em .0525em repeat-x,
+    radial-gradient(circle at 50% 0, transparent .0175em, var(--ink) .019em .051em, transparent .0525em) .07em 100% / .14em .0525em repeat-x;
+}
+.emo-scared .emo-sweat { left: 82%; top: 25%; }
+
+/* ---------- 惊讶：圆眼 + 高高的弯眉 + O 形嘴 ---------- */
+.emo-surprised .emo-brow {
+  top: 19%; width: .17em; height: .08em;
+  background: none;
+  border: .04em solid transparent; border-top-color: var(--ink);
+  border-radius: 50%;
+}
+.emo-surprised .emo-eye {
+  background: radial-gradient(circle at 42% 40%, #fff 0 .016em, transparent .02em),
+    radial-gradient(circle at 50% 52%, var(--ink) 0 .05em, transparent .054em), #fff;
+}
+.emo-surprised .emo-mouth {
+  top: 73%; width: .15em; height: .19em;
+  border: .035em solid var(--ink);
+  border-radius: 50%;
+  background: var(--mouth);
+}
+
+/* ---------- 动作：点一下触发（face.ts 的 playFace） ---------- */
+.emo-anim.emo-happy, .emo-act-happy { animation: emo-k-jump .45s ease-in-out 2; }
+.emo-anim.emo-sad, .emo-act-sad { animation: emo-k-droop 1.4s ease-in-out; }
+.emo-anim.emo-angry, .emo-act-angry { animation: emo-k-shake .7s linear; }
+.emo-anim.emo-scared, .emo-act-scared { animation: emo-k-shrink 1s ease-in-out; }
+.emo-anim.emo-surprised, .emo-act-surprised { animation: emo-k-pop .8s cubic-bezier(.3, 1.6, .5, 1); }
+
+@keyframes emo-k-jump {
+  0%, 100% { translate: 0 0; scale: 1 1; }
+  15% { translate: 0 0; scale: 1.08 .92; }
+  50% { translate: 0 -.18em; scale: .96 1.05; }
+  85% { translate: 0 0; scale: 1.05 .95; }
+}
+@keyframes emo-k-droop {
+  0%, 100% { translate: 0 0; rotate: 0deg; }
+  25%, 70% { translate: 0 .08em; rotate: -10deg; scale: .96; }
+}
+@keyframes emo-k-shake {
+  0%, 100% { translate: 0 0; scale: 1; }
+  10%, 30%, 50%, 70% { translate: -.04em 0; scale: 1.05; }
+  20%, 40%, 60%, 80% { translate: .04em 0; scale: 1.05; }
+}
+@keyframes emo-k-shrink {
+  0%, 100% { scale: 1; translate: 0 0; }
+  20% { scale: .8; translate: 0 .05em; }
+  30%, 50% { scale: .8; translate: -.015em .05em; }
+  40%, 60% { scale: .8; translate: .015em .05em; }
+  75% { scale: .82; translate: 0 .05em; }
+}
+@keyframes emo-k-pop {
+  0%, 100% { scale: 1; }
+  30% { scale: 1.25; }
+  60% { scale: 1.18; }
+}

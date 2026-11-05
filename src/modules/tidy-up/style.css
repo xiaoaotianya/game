@@ -1,0 +1,116 @@
+.g-tidy {
+  position: relative; height: 100%; overflow: hidden;
+  --ts: max(80px, min(22vw, 12vh));   /* 玩具 */
+  --bw: min(46vw, 28vh);              /* 玩具箱宽 */
+}
+@media (orientation: landscape) {
+  .g-tidy { --ts: max(80px, min(12vw, 20vh)); --bw: min(26vw, 36vh); }
+}
+.td-room { position: absolute; inset: 0; transition: filter .8s; }
+/* 墙：上 30%，带一扇小窗和踢脚线 */
+.td-wall {
+  position: absolute; left: 0; right: 0; top: 0; height: 30%;
+  background:
+    linear-gradient(transparent calc(100% - 2.2vmin), #d9b38c calc(100% - 2.2vmin)),
+    repeating-linear-gradient(90deg, #fff4e0 0 6vmin, #ffeccc 6vmin 12vmin);
+}
+.td-window {
+  position: absolute; right: 12%; bottom: 22%;
+  width: min(24vw, 16vh); height: min(18vw, 12vh);
+  border: 1.4vmin solid #fff; border-radius: 1.5vmin;
+  background:
+    linear-gradient(90deg, transparent calc(50% - .5vmin), #fff calc(50% - .5vmin) calc(50% + .5vmin), transparent 0),
+    linear-gradient(#a5d8ff, #e7f5ff);
+  box-shadow: 0 .6vmin 0 rgba(0, 0, 0, .08);
+}
+/* 地板：木条纹 */
+.td-floor {
+  position: absolute; left: 0; right: 0; top: 30%; bottom: 0;
+  background:
+    linear-gradient(rgba(0, 0, 0, .08), transparent 3vmin),
+    repeating-linear-gradient(90deg, rgba(0, 0, 0, .06) 0 .4vmin, transparent .4vmin 16vmin),
+    repeating-linear-gradient(#f1c58f 0 9vmin, #e9b87d 9vmin 9.4vmin);
+  overflow: hidden;
+}
+
+/* 玩具：透明底，靠投影立在地板上 */
+.g-tidy .td-toy {
+  position: absolute;
+  width: var(--ts); height: var(--ts);
+  font-size: calc(var(--ts) * .86);
+  background: transparent; box-shadow: none;
+  filter: drop-shadow(0 .8vmin .6vmin rgba(74, 59, 107, .25));
+}
+.td-rot { display: grid; place-items: center; line-height: 1; }
+
+/* 玩具箱：箱身 + 可开合的盖子；放进来的玩具在箱身后面下沉 */
+.td-box {
+  position: absolute; z-index: 1;
+  left: 50%; translate: -50% 0;
+  bottom: calc(env(safe-area-inset-bottom) + 3vmin);
+  width: var(--bw); height: calc(var(--bw) * .75);
+}
+.td-body {
+  position: absolute; z-index: 2; left: 0; right: 0; bottom: 0;
+  height: calc(var(--bw) * .56);
+  display: grid; place-items: center;
+  border-radius: 1.5vmin 1.5vmin 3vmin 3vmin;
+  background:
+    linear-gradient(transparent 18%, rgba(255, 255, 255, .25) 18% 24%, transparent 24%),
+    linear-gradient(90deg, rgba(0, 0, 0, .08), transparent 25%, transparent 75%, rgba(0, 0, 0, .1)),
+    #ff8787;
+  box-shadow: inset 0 -1.2vmin 0 rgba(0, 0, 0, .12), var(--shadow);
+}
+.td-heart {
+  width: 26%; height: 26%; margin-top: 12%;
+  background: #ffe066;
+  clip-path: polygon(50% 92%, 6% 48%, 10% 22%, 30% 10%, 50% 26%, 70% 10%, 90% 22%, 94% 48%);
+}
+.td-lid {
+  /* 盖子立在箱子后沿、略向后仰（打开状态）；在箱口后面，玩具落进来时盖不住它 */
+  position: absolute; z-index: 0; left: -2%; width: 104%;
+  bottom: calc(var(--bw) * .52);
+  height: calc(var(--bw) * .3);
+  border-radius: 2vmin 2vmin .6vmin .6vmin;
+  background: linear-gradient(#ff8787, #fa5252);
+  box-shadow: inset 0 -.8vmin 0 rgba(0, 0, 0, .12), inset 0 .8vmin 0 rgba(255, 255, 255, .25);
+  transform-origin: 50% 100%;
+  transform: perspective(60vmin) rotateX(28deg);
+  transition: transform .3s;
+}
+/* 箱口内沿 */
+.td-box::before {
+  content: ''; position: absolute; z-index: 1; left: 4%; right: 4%;
+  bottom: calc(var(--bw) * .5); height: calc(var(--bw) * .1);
+  border-radius: 50% / 100% 100% 0 0;
+  background: #c92a2a;
+}
+.td-lid.td-snap { animation: tdSnap .45s ease-in-out; }
+@keyframes tdSnap { 45% { transform: perspective(60vmin) rotateX(-70deg); } 100% { transform: perspective(60vmin) rotateX(28deg); } }
+/* 收完：盖子向前合上，盖在箱口上 */
+.td-lid.td-shut { z-index: 3; transform: perspective(60vmin) rotateX(-84deg); }
+/* 箱口：玩具飞到这里，再缩小沉进箱身 */
+.td-in {
+  position: absolute; z-index: 1;
+  left: 50%; translate: -50% 0;
+  bottom: calc(var(--bw) * .32);
+  width: var(--ts); height: var(--ts);
+}
+.g-tidy .td-in .tile {
+  position: absolute !important; inset: 0 !important;
+  left: 0 !important; top: 0 !important;
+  width: 100%; height: 100%;
+  filter: none;
+}
+.td-in .tile.td-drop { animation: tdDrop .45s .4s ease-in forwards; }
+@keyframes tdDrop { to { translate: 0 80%; scale: .45; opacity: 0; } }
+
+/* 收完：房间变亮，地板上扫过一道光 */
+.g-tidy.td-clean .td-room { filter: brightness(1.12) saturate(1.15); }
+.g-tidy.td-clean .td-floor::after {
+  content: ''; position: absolute; top: 0; bottom: 0; left: -40%; width: 30%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .7), transparent);
+  transform: skewX(-20deg);
+  animation: tdShine 1.2s ease-in-out 2;
+}
+@keyframes tdShine { to { left: 120%; } }

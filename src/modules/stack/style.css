@@ -1,0 +1,44 @@
+/* 叠高高：积木位置由 JS 用 transform 按像素摆；世界层整体下移实现相机跟随 */
+.g-stack {
+  position: relative; height: 100%; overflow: hidden;
+  background: linear-gradient(180deg, #a5d8ff, #e7f5ff 70%);
+  cursor: pointer;
+}
+.st-world { position: absolute; inset: 0; pointer-events: none; }
+.st-ground {
+  position: absolute; left: -10%; right: -10%; height: 200vh;
+  background: linear-gradient(180deg, #8ce99a 0, #69db7c 3vmin, #c9a074 3vmin, #b08460);
+  box-shadow: inset 0 1vmin 0 rgba(255, 255, 255, .35);
+}
+
+.st-block {
+  position: absolute; left: 0; top: 0; z-index: 2;
+  width: var(--b); height: var(--bh);
+  display: grid; place-items: center;
+  border-radius: 22%;
+  background: var(--c);
+  box-shadow: inset 0 -1.2vmin 0 rgba(0, 0, 0, .14), inset 0 1vmin 0 rgba(255, 255, 255, .35);
+  pointer-events: none;
+}
+.st-block span {
+  font: 900 calc(var(--bh) * .55) / 1 "Arial Rounded MT Bold", system-ui, sans-serif;
+  color: #fff;
+  text-shadow: 0 .4vmin 0 rgba(0, 0, 0, .15);
+}
+.st-swing { z-index: 5; }
+.st-in { animation: stIn .35s cubic-bezier(.3, 1.5, .5, 1); }
+@keyframes stIn { from { scale: 0; } }
+/* 落地压扁一下 */
+.st-land { animation: stLand .32s ease-out; transform-origin: 50% 100%; }
+@keyframes stLand { 30% { scale: 1.12 .82; } 65% { scale: .95 1.06; } }
+.st-glow { box-shadow: 0 0 0 1.2vmin rgba(255, 224, 102, .9), 0 0 4vmin #ffd43b, inset 0 -1.2vmin 0 rgba(0, 0, 0, .14); }
+
+/* 提示：塔顶上方往下指的手指 */
+.st-arrow {
+  position: absolute; left: 0; top: 0; z-index: 3;
+  font-size: calc(var(--bh) * .7);
+  margin-left: calc(var(--bh) * -.35);
+  opacity: 0;
+}
+.st-arrow.on { opacity: 1; animation: stPoint .7s ease-in-out infinite; }
+@keyframes stPoint { 50% { translate: 0 1.5vmin; } }

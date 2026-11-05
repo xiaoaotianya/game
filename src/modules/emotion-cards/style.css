@@ -1,0 +1,64 @@
+.g-emo-cards {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center; gap: 2vmin;
+  padding: calc(env(safe-area-inset-top) + var(--hb) + 2vmin) 2vmin calc(env(safe-area-inset-bottom) + 3vmin);
+}
+.emo-holder {
+  position: relative;
+  width: min(76vw, 50vh); height: min(92vw, 60vh);
+  touch-action: none;
+  cursor: pointer;
+}
+@media (orientation: landscape) {
+  .emo-holder { width: min(46vw, 64vh); height: min(56vw, 78vh); }
+}
+.emo-card {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2vmin;
+  border-radius: 8vmin;
+  background: #fff;
+  background: color-mix(in srgb, var(--c) 28%, #fff);
+  border: 1.5vmin solid #fff;
+  box-shadow: var(--shadow);
+}
+.emo-big { font-size: min(52vw, 32vh); line-height: 1; filter: drop-shadow(0 1.2vmin 0 rgba(74, 59, 107, .12)); }
+@media (orientation: landscape) { .emo-big { font-size: min(30vw, 40vh); } }
+.emo-name { font-size: clamp(28px, 8vmin, 64px); font-weight: 800; }
+.emo-sub { font-size: clamp(18px, 5vmin, 40px); opacity: .6; margin-top: -1vmin; }
+
+.emo-in-right { animation: emo-k-in-r .4s cubic-bezier(.3, 1.3, .5, 1); }
+.emo-in-left { animation: emo-k-in-l .4s cubic-bezier(.3, 1.3, .5, 1); }
+.emo-out-left { animation: emo-k-out-l .4s forwards; pointer-events: none; }
+.emo-out-right { animation: emo-k-out-r .4s forwards; pointer-events: none; }
+@keyframes emo-k-in-r { from { transform: translateX(80%) rotate(12deg); opacity: 0; } }
+@keyframes emo-k-in-l { from { transform: translateX(-80%) rotate(-12deg); opacity: 0; } }
+@keyframes emo-k-out-l { to { transform: translateX(-90%) rotate(-12deg); opacity: 0; } }
+@keyframes emo-k-out-r { to { transform: translateX(90%) rotate(12deg); opacity: 0; } }
+
+/* 圆形箭头按钮：里面是 CSS 画的粗箭头 */
+.emo-nav {
+  flex: none;
+  width: clamp(80px, 13vmin, 110px); height: clamp(80px, 13vmin, 110px);
+  display: grid; place-items: center;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  touch-action: none;
+}
+.emo-nav:active { scale: .9; }
+.emo-chev {
+  width: 32%; height: 32%;
+  border: solid #7c5cff;
+  border-width: clamp(7px, 1.6vmin, 12px) clamp(7px, 1.6vmin, 12px) 0 0;
+  border-radius: 3px;
+  pointer-events: none;
+}
+.emo-next .emo-chev { transform: translateX(-18%) rotate(45deg); }
+.emo-prev .emo-chev { transform: translateX(18%) rotate(-135deg); }
+@media (orientation: portrait) {
+  /* 竖屏：箭头放在卡片下方两侧 */
+  .g-emo-cards { flex-wrap: wrap; align-content: center; }
+  .emo-holder { order: 0; flex-basis: 100%; max-width: min(76vw, 50vh); }
+  .emo-nav { order: 1; margin: 3vmin 8vw 0; }
+}

@@ -1,0 +1,136 @@
+.g-emo-story {
+  --an: min(40vw, 22vh);  /* 动物 */
+  --fs: min(27vw, 16vh);  /* 表情选项 */
+}
+@media (orientation: landscape) {
+  .g-emo-story { --an: min(24vw, 30vh); --fs: min(17vw, 25vh); }
+}
+
+/* ---------- 场景 ---------- */
+.emo-scene {
+  position: relative;
+  width: min(92vw, 70vh); height: min(44vh, 96vw);
+  display: flex; align-items: flex-end; justify-content: center; gap: 4vmin;
+  padding: 0 4vmin 6vmin;
+  border-radius: 7vmin;
+  background: linear-gradient(#e7f5ff 0 70%, #d3f9d8 70%);
+  border: 1.2vmin solid #fff;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  cursor: pointer;
+}
+@media (orientation: landscape) {
+  .emo-scene { width: min(80vw, 120vh); height: 46vh; }
+}
+/* 天黑用的遮罩，盖在背景上、动物下面 */
+.emo-scene::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(#1c2a55, #3b3f74 70%, #2f4a3a 70%);
+  opacity: 0;
+  pointer-events: none;
+}
+.emo-animal, .emo-prop { position: relative; z-index: 1; line-height: 1; }
+.emo-animal { font-size: var(--an); }
+.emo-prop { font-size: calc(var(--an) * .56); }
+.emo-prop-in { display: inline-block; }
+
+/* 点对后，动物旁边出现小表情 */
+.emo-mood {
+  position: absolute; right: -.14em; top: -.06em;
+  font-size: .42em;
+  scale: 0;
+  pointer-events: none;
+}
+.emo-mood.emo-show { animation: emo-k-mood .5s cubic-bezier(.3, 1.6, .5, 1) forwards; }
+@keyframes emo-k-mood { to { scale: 1; } }
+
+/* ---------- 物品动效（.emo-go 触发） ---------- */
+/* 气球往上飘走 */
+.emo-fx-away .emo-prop { align-self: center; }
+.emo-fx-away.emo-go .emo-prop-in { animation: emo-k-away 2.6s ease-in forwards; }
+@keyframes emo-k-away {
+  30% { translate: .08em -.4em; rotate: 6deg; }
+  60% { translate: -.06em -1.2em; rotate: -6deg; }
+  100% { translate: .1em -2.6em; rotate: 4deg; opacity: 0; }
+}
+
+/* 乌云 + 雨滴落下 + 闪电 */
+.emo-fx-rain .emo-prop { align-self: flex-start; margin-top: 3vmin; }
+.emo-drop {
+  position: absolute; top: 85%;
+  width: .07em; height: .11em;
+  border-radius: 50% 50% 50% 50% / 65% 65% 35% 35%;
+  background: #74c0fc;
+  opacity: 0;
+}
+.emo-drop:nth-of-type(1) { left: 18%; }
+.emo-drop:nth-of-type(2) { left: 38%; animation-delay: .3s !important; }
+.emo-drop:nth-of-type(3) { left: 58%; animation-delay: .15s !important; }
+.emo-drop:nth-of-type(4) { left: 78%; animation-delay: .45s !important; }
+.emo-drop:nth-of-type(5) { left: 48%; animation-delay: .6s !important; }
+.emo-fx-rain.emo-go .emo-drop { animation: emo-k-rain .8s linear infinite; }
+@keyframes emo-k-rain {
+  0% { translate: 0 0; opacity: 0; }
+  15% { opacity: 1; }
+  100% { translate: 0 1.1em; opacity: 0; }
+}
+.emo-bolt { position: absolute; left: 62%; top: 50%; font-size: .5em; opacity: 0; }
+.emo-fx-rain.emo-go .emo-bolt { animation: emo-k-bolt 1.4s ease-out 2; }
+@keyframes emo-k-bolt { 8%, 22% { opacity: 1; scale: 1.2; } 15%, 40%, 100% { opacity: 0; } }
+.emo-fx-rain.emo-go::before { animation: emo-k-flash 1.4s ease-out 2; }
+@keyframes emo-k-flash { 0%, 100% { opacity: 0; } 10% { opacity: .35; } 20% { opacity: .1; } 30% { opacity: .3; } }
+
+/* 积木倒下 */
+.emo-fx-topple .emo-prop-in { transform-origin: 85% 100%; }
+.emo-fx-topple.emo-go .emo-prop-in { animation: emo-k-topple 1s .2s ease-in forwards; }
+@keyframes emo-k-topple {
+  30% { rotate: -8deg; }
+  80% { rotate: 84deg; }
+  90% { rotate: 76deg; }
+  100% { rotate: 80deg; }
+}
+
+/* 礼物 / 彩虹突然跳出来 */
+.emo-fx-pop .emo-prop-in { scale: 0; }
+.emo-fx-pop.emo-go .emo-prop-in { animation: emo-k-pop-in .7s cubic-bezier(.3, 1.7, .5, 1) forwards; }
+@keyframes emo-k-pop-in { from { scale: 0; translate: 0 .4em; } to { scale: 1; translate: 0 0; } }
+
+/* 蛋糕 / 竹子蹦蹦跳 */
+.emo-fx-bounce.emo-go .emo-prop-in { animation: emo-k-hop .5s ease-in-out 3; }
+@keyframes emo-k-hop { 50% { translate: 0 -.25em; } }
+
+/* 冰淇淋掉到地上 */
+.emo-fx-drop .emo-prop { align-self: center; }
+.emo-fx-drop.emo-go .emo-prop-in { animation: emo-k-fall .8s .2s cubic-bezier(.5, 0, .9, .6) forwards; }
+@keyframes emo-k-fall { to { translate: .1em .75em; rotate: 160deg; } }
+
+/* 香蕉被拿走 */
+.emo-fx-snatch.emo-go .emo-prop-in { animation: emo-k-snatch 1.1s .3s ease-in forwards; }
+@keyframes emo-k-snatch {
+  20% { translate: -.1em 0; }
+  100% { translate: 3em -.6em; rotate: 40deg; opacity: 0; }
+}
+
+/* 天黑了，月亮出来 */
+.emo-fx-night .emo-prop { align-self: flex-start; margin-top: 3vmin; }
+.emo-fx-night .emo-prop-in { opacity: 0; }
+.emo-fx-night.emo-go::before { animation: emo-k-dark 1.2s ease-in forwards; }
+.emo-fx-night.emo-go .emo-prop-in { animation: emo-k-moon 1s .8s ease-out forwards; }
+@keyframes emo-k-dark { to { opacity: 1; } }
+@keyframes emo-k-moon { from { opacity: 0; translate: 0 .3em; } to { opacity: 1; translate: 0 0; } }
+
+/* ---------- 表情选项 ---------- */
+.emo-opts { gap: 5vmin; }
+.emo-opt {
+  width: var(--fs); height: var(--fs);
+  display: grid; place-items: center;
+  font-size: calc(var(--fs) * .8);
+  border-radius: 28%;
+  background: #fff;
+  box-shadow: var(--shadow);
+  border: .7vmin solid transparent;
+  cursor: pointer;
+  touch-action: none;
+}
+.emo-opt:active { scale: .95; }
+.emo-opt.emo-right { border-color: #7ed957; }

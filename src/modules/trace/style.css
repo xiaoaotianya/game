@@ -1,0 +1,62 @@
+/* 小车开回家：SVG 画马路，小车、房子、提示手指由 JS 用 transform 按像素摆 */
+.g-trace {
+  --car: max(96px, calc(var(--rw) * 1.15));
+  position: relative; height: 100%; overflow: hidden;
+  background:
+    radial-gradient(circle at 12% 88%, #b2f2bb 0 9vmin, transparent 9.2vmin),
+    radial-gradient(circle at 88% 14%, #fff 0 5vmin, transparent 5.2vmin),
+    linear-gradient(180deg, #d0ebff, #d3f9d8 35%, #b2f2bb);
+}
+.tr-svg { position: absolute; left: 0; top: 0; pointer-events: none; }
+.tr-svg path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.tr-edge { stroke: #5c677d; }
+.tr-road { stroke: #adb5bd; }
+.tr-mid { stroke: #fff; }
+.tr-trail { stroke: #ffd43b; opacity: .75; }
+
+.tr-house { position: absolute; left: 0; top: 0; z-index: 2; width: var(--hs); height: var(--hs); pointer-events: none; }
+.tr-house-in { position: relative; font-size: var(--hs); transition: filter .4s; filter: saturate(.75) brightness(.92); }
+.tr-light {
+  position: absolute; inset: -15%; border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 236, 153, .95) 0 35%, rgba(255, 212, 59, 0) 70%);
+  opacity: 0; scale: .6;
+  transition: opacity .4s, scale .4s;
+}
+.tr-house.on .tr-light { opacity: 1; scale: 1; }
+.tr-house.on .tr-house-in { filter: none; animation: trHop .5s ease-out; }
+@keyframes trHop { 40% { scale: 1.1; } }
+
+/* 小车：外层定位（中心点在路上），点击区 ≥96px */
+.tr-car {
+  position: absolute; left: 0; top: 0; z-index: 3;
+  width: 0; height: 0;
+  touch-action: none;
+}
+.tr-car::before {
+  /* 透明的大点击区 */
+  content: ''; position: absolute;
+  width: var(--car); height: var(--car);
+  left: calc(var(--car) * -.5); top: calc(var(--car) * -.5);
+  border-radius: 50%;
+}
+.tr-car-in {
+  position: absolute;
+  width: 1em; height: 1em;
+  left: -.5em; top: -.5em;
+  font-size: calc(var(--car) * .9);
+  display: grid; place-items: center;
+  pointer-events: none;
+  filter: drop-shadow(0 .6vmin .4vmin rgba(0, 0, 0, .18));
+}
+.tr-car.tr-pop .tr-car-in { animation: trPop .4s cubic-bezier(.3, 1.5, .5, 1); }
+@keyframes trPop { from { scale: 0; } }
+.tr-car.tr-drive .tr-car-in { filter: drop-shadow(0 1.2vmin .8vmin rgba(0, 0, 0, .25)); }
+.tr-car.tr-home .tr-car-in { transition: opacity .5s .2s, scale .5s .2s; opacity: 0; scale: .4; }
+
+.tr-finger {
+  position: absolute; left: 0; top: 0; z-index: 4;
+  font-size: calc(var(--rw) * .7);
+  margin: calc(var(--rw) * -.1) 0 0 calc(var(--rw) * -.3);
+  pointer-events: none;
+  opacity: 0;
+}

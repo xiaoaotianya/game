@@ -1,0 +1,118 @@
+/* 钓鱼：上方天空 + 小船，下方海水；鱼、船、鱼线的位置由 JS 用 transform 按像素摆 */
+.g-fish {
+  --bk: clamp(80px, 17vmin, 130px);
+  position: relative; height: 100%; overflow: hidden;
+  background: #bfe9ff;
+}
+.fi-sky {
+  position: absolute; left: 0; right: 0; top: 0; height: var(--sky);
+  background:
+    radial-gradient(circle at 62% 38%, #fff 0 4vmin, transparent 4.2vmin),
+    radial-gradient(circle at 67% 34%, #fff 0 5vmin, transparent 5.2vmin),
+    radial-gradient(circle at 72% 40%, #fff 0 3.6vmin, transparent 3.8vmin),
+    linear-gradient(180deg, #a5d8ff, #e7f5ff);
+}
+.fi-sea {
+  position: absolute; left: 0; right: 0; bottom: 0; top: var(--sky);
+  background: linear-gradient(180deg, #74c0fc, #339af0 45%, #1864ab);
+}
+/* 水面小波浪 */
+.fi-sea::before {
+  content: ''; position: absolute; left: 0; right: 0; top: -1.6vmin; height: 3.2vmin;
+  background: radial-gradient(circle at 50% 100%, #74c0fc 0 1.6vmin, transparent 1.7vmin) 0 0 / 6vmin 3.2vmin repeat-x;
+}
+/* 海底沙子 */
+.fi-sea::after {
+  content: ''; position: absolute; left: -5%; right: -5%; bottom: -3vmin; height: 8vmin;
+  border-radius: 50% 50% 0 0;
+  background: #ffe8a3; opacity: .85;
+}
+
+.fi-bubbles { position: absolute; left: 0; right: 0; top: var(--sky); bottom: 0; pointer-events: none; overflow: hidden; }
+.fi-bubble {
+  position: absolute; bottom: -4vmin;
+  width: var(--bs); height: var(--bs); border-radius: 50%;
+  border: .35vmin solid rgba(255, 255, 255, .7);
+  background: rgba(255, 255, 255, .18);
+  animation: fiRise 6s linear infinite;
+}
+@keyframes fiRise {
+  0% { transform: translate(0, 0); opacity: 0; }
+  10% { opacity: 1; }
+  50% { transform: translate(1.5vmin, calc(var(--sky) * -1.4)); }
+  90% { opacity: 1; }
+  100% { transform: translate(-1vmin, -80vh); opacity: 0; }
+}
+
+/* 鱼：外层负责位置和点击区（≥80px），内层负责朝向 / 晃动 */
+.fi-fish {
+  position: absolute; left: 0; top: 0; z-index: 3;
+  width: var(--fs); height: var(--fs);
+  display: grid; place-items: center;
+  touch-action: none; cursor: pointer;
+}
+.fi-body {
+  font-size: calc(var(--fs) * .82);
+  pointer-events: none;
+  animation: fiBob 2.2s ease-in-out var(--d, 0s) infinite;
+}
+@keyframes fiBob { 50% { translate: 0 -1.2vmin; } }
+.fi-body.fi-wag { animation: fiWag .45s ease-in-out 3, fiBob 2.2s ease-in-out var(--d, 0s) infinite; }
+@keyframes fiWag { 25% { rotate: -16deg; } 75% { rotate: 16deg; } }
+.fi-body.fi-bite { animation: fiWag .22s ease-in-out infinite; }
+.fi-body.fi-glow { animation: fiGlow .6s ease-in-out 4, fiBob 2.2s ease-in-out var(--d, 0s) infinite; }
+@keyframes fiGlow {
+  50% { filter: drop-shadow(0 0 1.2vmin #ffe066) drop-shadow(0 0 2.4vmin #ffd43b); scale: 1.12; }
+}
+
+/* 小船：容器的 x 由 JS 设，内层居中并轻轻摇 */
+.fi-boat { position: absolute; left: 0; top: var(--sky); z-index: 4; width: 0; height: 0; pointer-events: none; }
+.fi-boat-in {
+  position: absolute; left: 0; bottom: -1.2vmin;
+  font-size: clamp(80px, 20vmin, 160px);
+  translate: -50% 0;
+  animation: fiRock 3s ease-in-out infinite;
+  transform-origin: 50% 90%;
+}
+@keyframes fiRock { 25% { rotate: -4deg; } 75% { rotate: 4deg; } }
+
+/* 鱼线 + 鱼钩：高度由 JS 设 */
+.fi-line {
+  position: absolute; left: 0; top: var(--sky); z-index: 2;
+  width: max(2px, .45vmin); margin-left: max(-1px, -.22vmin);
+  background: #495057;
+  pointer-events: none;
+}
+.fi-hook {
+  position: absolute; left: 50%; bottom: -2.6vmin;
+  width: 2.8vmin; height: 3vmin;
+  margin-left: -2.6vmin;
+  border: .6vmin solid #868e96; border-top: 0; border-left-color: transparent;
+  border-radius: 0 0 50% 50%;
+}
+
+/* 小桶：右上角，桶口露出钓到的小动物，下面一排 5 个点表示进度 */
+.fi-bucket {
+  position: absolute; z-index: 5;
+  top: calc(env(safe-area-inset-top) + 2vmin); right: calc(env(safe-area-inset-right) + 3vmin);
+  width: var(--bk); height: var(--bk);
+  pointer-events: none;
+}
+.fi-bucket::before {
+  content: ''; position: absolute; left: 18%; right: 18%; top: 8%; height: 40%;
+  border: .7vmin solid #868e96; border-bottom: 0; border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+}
+.fi-fill {
+  position: absolute; left: 6%; right: 6%; top: 14%; height: 36%;
+  display: flex; justify-content: center; align-items: flex-end;
+}
+.fi-mini { font-size: calc(var(--bk) * .34); margin: 0 -4%; animation: fiPop .35s cubic-bezier(.3, 1.5, .5, 1); }
+@keyframes fiPop { from { scale: 0; } }
+.fi-pail {
+  position: absolute; left: 8%; right: 8%; top: 36%; height: 46%;
+  background: linear-gradient(180deg, #ffc078, #fd7e14);
+  clip-path: polygon(0 0, 100% 0, 86% 100%, 14% 100%);
+}
+.fi-dots { position: absolute; left: 0; right: 0; bottom: 0; height: 14%; display: flex; justify-content: center; gap: 4%; }
+.fi-dot { height: 100%; aspect-ratio: 1; border-radius: 50%; background: rgba(255, 255, 255, .8); box-shadow: 0 .3vmin 0 rgba(0, 0, 0, .1); transition: background .3s, scale .3s; }
+.fi-dot.on { background: #ffd43b; scale: 1.2; }

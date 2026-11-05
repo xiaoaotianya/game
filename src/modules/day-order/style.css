@@ -1,0 +1,36 @@
+/* 格子和卡片同尺寸；按本轮步数定，拖走卡片后不变（不用通用的 :has 计数规则） */
+.g-board.g-order .row { --it: min(26vw, 15vh); gap: 3vmin; }
+.g-board.g-order[data-n="4"] .row { --it: max(80px, min(21vw, 13vh)); gap: 2.5vmin; }
+@media (orientation: landscape) {
+  .g-board.g-order .row { --it: min(18vw, 28vh); gap: 4vmin; }
+  .g-board.g-order[data-n="4"] .row { --it: max(80px, min(15vw, 26vh)); gap: 3vmin; }
+}
+.od-slots { flex-wrap: nowrap; }
+.od-slot { position: relative; }
+/* 淡色序号：角上的小数字 + 中间的点点（几个点就是第几步） */
+.od-no {
+  position: absolute; left: 8%; top: 4%;
+  font: 800 calc(var(--it) * .2) / 1 system-ui, sans-serif;
+  color: rgba(74, 59, 107, .28);
+}
+.od-dots {
+  position: absolute; inset: 22%;
+  display: flex; flex-wrap: wrap; justify-content: center; align-content: center;
+  gap: calc(var(--it) * .06);
+}
+.od-dots i {
+  width: calc(var(--it) * .15); height: calc(var(--it) * .15);
+  border-radius: 50%;
+  background: rgba(74, 59, 107, .2);
+}
+.od-slot.done .od-no, .od-slot.done .od-dots { display: none; }
+.od-slot .tile { position: absolute; inset: 0; width: auto; height: auto; }
+.g-order .od-card { cursor: pointer; }
+/* 连读时当前这一步放大发亮 */
+.od-slot .od-card.od-lit {
+  scale: 1.15;
+  background: #fff3bf;
+  box-shadow: 0 0 0 1.2vmin rgba(255, 212, 59, .7);
+  animation: odLit .3s ease-out;
+}
+@keyframes odLit { from { scale: 1; } }

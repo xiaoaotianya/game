@@ -1,0 +1,57 @@
+/* 找规律：--pc 为序列格子大小。竖屏一行放不下 7 个大格子，就折成两行（--per 为每行个数） */
+.g-pat { --pc: min(21vw, 11vh); --per: 4; }
+.g-pat[data-n="5"], .g-pat[data-n="6"] { --pc: min(25vw, 12vh); --per: 3; }
+@media (orientation: landscape) {
+  .g-pat { --pc: min(calc((90vw - 6 * 1.4vw) / 7), 24vh); --per: 7; }
+  .g-pat[data-n="5"] { --pc: min(calc((90vw - 4 * 1.4vw) / 5), 26vh); --per: 5; }
+  .g-pat[data-n="6"] { --pc: min(calc((90vw - 5 * 1.4vw) / 6), 25vh); --per: 6; }
+}
+
+.pt-seq {
+  display: flex; flex-wrap: wrap; justify-content: center; align-items: center;
+  gap: 2vmin;
+  max-width: calc(var(--per) * var(--pc) + (var(--per) - 1) * 2vmin + 3vmin + 1px);
+  padding: 1.5vmin;
+  border-radius: 4vmin;
+  background: rgba(255, 255, 255, .45);
+}
+.pt-cell {
+  position: relative;
+  width: var(--pc); height: var(--pc);
+  display: grid; place-items: center;
+  font-size: calc(var(--pc) * .8);
+  border-radius: 24%;
+  background: rgba(255, 255, 255, .85);
+  box-shadow: var(--shadow);
+  scale: 0; opacity: 0;
+  transition: scale .35s cubic-bezier(.3, 1.6, .5, 1), opacity .2s;
+}
+.pt-cell.pt-in { scale: 1; opacity: 1; }
+.pt-cell.pt-hop { animation: ptHop .4s ease-in-out; }
+@keyframes ptHop { 50% { translate: 0 -2.4vmin; } }
+
+/* 问号泡泡 */
+.pt-q {
+  border-radius: 50%;
+  background: radial-gradient(circle at 32% 28%, #fff7 0 12%, transparent 13%), linear-gradient(160deg, #b197fc, #845ef7);
+  box-shadow: 0 0 0 .6vmin #fff, var(--shadow);
+}
+.pt-q.pt-in:not(.pt-filled) { animation: ptBob 1.6s ease-in-out infinite; }
+.pt-q.pt-in.glow { animation: glow .6s ease-in-out 3; }
+@keyframes ptBob { 50% { translate: 0 -1vmin; } }
+.pt-qmark { width: 46%; height: 62%; }
+.pt-q.pt-filled { background: #fff3bf; box-shadow: 0 0 0 .6vmin #ffd43b, var(--shadow); }
+.pt-q.pt-filled .pt-qmark { display: none; }
+.pt-q.pt-filled.pt-hop { animation: ptHop .4s ease-in-out; }
+.pt-q .tile {
+  position: absolute; inset: 0;
+  width: auto; height: auto;
+  font-size: calc(var(--pc) * .8);
+  background: transparent; box-shadow: none;
+}
+
+/* 选项 */
+.pt-opts { opacity: 0; pointer-events: none; transition: opacity .3s; }
+.pt-opts.pt-show { opacity: 1; pointer-events: auto; }
+.g-pat .pt-opts .tile { --it: min(25vw, 16vh); }
+@media (orientation: landscape) { .g-pat .pt-opts .tile { --it: min(16vw, 27vh); } }

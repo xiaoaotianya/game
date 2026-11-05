@@ -1,0 +1,65 @@
+.g-dress {
+  --sk: min(26vw, 13vh);  /* 天气图标 */
+  --bs: min(62vw, 33vh);  /* 小熊 */
+}
+@media (orientation: landscape) {
+  .g-dress { --sk: min(16vw, 24vh); --bs: min(32vw, 46vh); }
+}
+.dr2-stage { display: flex; flex-direction: column; align-items: center; gap: 2vmin; }
+@media (orientation: landscape) {
+  .dr2-stage { flex-direction: row; gap: 6vw; }
+}
+.dr2-sky {
+  width: calc(var(--sk) * 1.25); height: calc(var(--sk) * 1.25);
+  display: grid; place-items: center;
+  font-size: var(--sk);
+  border-radius: 50%;
+  cursor: pointer;
+}
+.dr2-sky-sun { background: radial-gradient(#fff3bf 55%, transparent 70%); }
+.dr2-sky-sun > * { animation: dr2Spin 8s linear infinite; }
+.dr2-sky-rain { background: radial-gradient(#d0ebff 55%, transparent 70%); }
+.dr2-sky-rain > * { animation: dr2Bob 1.6s ease-in-out infinite; }
+.dr2-sky-cold { background: radial-gradient(#e7f5ff 55%, transparent 70%); }
+.dr2-sky-cold > * { animation: dr2Bob 2.4s ease-in-out infinite; }
+@keyframes dr2Spin { to { rotate: 360deg; } }
+@keyframes dr2Bob { 50% { translate: 0 -6%; } }
+
+/* 小熊 + 身上的挂点 */
+.dr2-bear {
+  position: relative;
+  width: var(--bs); height: var(--bs);
+  display: grid; place-items: center;
+  border-radius: 50%;
+  background: radial-gradient(rgba(255, 255, 255, .7) 50%, transparent 70%);
+  cursor: pointer;
+}
+.dr2-me { font-size: calc(var(--bs) * .86); }
+.dr2-bear.dr2-happy .dr2-me { animation: dr2Hop .5s ease-in-out 3; }
+@keyframes dr2Hop { 50% { translate: 0 -8%; scale: 1.04 .96; } }
+.dr2-spot {
+  position: absolute;
+  width: calc(var(--bs) * .34); height: calc(var(--bs) * .34);
+  translate: -50% -50%;
+  pointer-events: none;
+}
+.dr2-at-head { left: 50%; top: 10%; }
+.dr2-at-face { left: 50%; top: 32%; }
+.dr2-at-neck { left: 50%; top: 54%; }
+.dr2-at-body { left: 50%; top: 72%; }
+.dr2-at-hand { left: 13%; top: 46%; }
+.dr2-at-feet { left: 84%; top: 88%; }
+.dr2-spot .tile {
+  width: 100%; height: 100%;
+  font-size: calc(var(--bs) * .3);
+  background: transparent; box-shadow: none;
+}
+.dr2-spot .tile.dr2-on { animation: dr2Pop .35s .42s ease-out; }
+@keyframes dr2Pop { 50% { scale: 1.2; } }
+
+/* 托盘：按选项总数定尺寸，拖走后不变 */
+.g-dress .dr2-tray { --it: min(26vw, 14vh); }
+.g-dress .dr2-tray.dr2-n4, .g-dress .dr2-tray.dr2-n5 { --it: max(80px, min(21vw, 12vh)); gap: 2.5vmin; }
+@media (orientation: landscape) {
+  .g-dress .dr2-tray, .g-dress .dr2-tray.dr2-n4, .g-dress .dr2-tray.dr2-n5 { --it: max(80px, min(13vw, 20vh)); gap: 3vmin; }
+}

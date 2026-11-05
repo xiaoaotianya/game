@@ -1,0 +1,42 @@
+/* 分一分：--pw 为每只小动物一栏的宽度 */
+.g-share { --pw: min(40vw, 22vh); }
+.g-share:has(.sh-pal:nth-child(3)) { --pw: min(29vw, 19vh); }
+.g-share:has(.sh-pal:nth-child(4)) { --pw: min(21vw, 16vh); }
+@media (orientation: landscape) {
+  .g-share { --pw: min(24vw, 34vh); }
+  .g-share:has(.sh-pal:nth-child(3)) { --pw: min(20vw, 32vh); }
+  .g-share:has(.sh-pal:nth-child(4)) { --pw: min(17vw, 30vh); }
+}
+
+.sh-pals { display: flex; justify-content: center; align-items: flex-end; gap: 2vmin; width: 100%; }
+.sh-pal {
+  width: var(--pw);
+  display: flex; flex-direction: column; align-items: center; gap: 1vmin;
+  padding: 1.5vmin 0 2vmin;
+  border-radius: 6vmin;
+}
+.sh-ani { font-size: calc(var(--pw) * .78); }
+.sh-ani.sh-hop { animation: shHop .5s ease-in-out; }
+.sh-pal.sh-happy .sh-ani { animation: shHop .6s ease-in-out 3; }
+@keyframes shHop { 40% { translate: 0 -3vmin; scale: 1.1; } }
+
+/* 盘子：椭圆白盘，有了东西就镶绿边 */
+.sh-plate {
+  position: relative;
+  width: calc(var(--pw) * .92); height: calc(var(--pw) * .5);
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, #fff 0 52%, #f1ecf8 53% 100%);
+  box-shadow: 0 .8vmin 0 rgba(74, 59, 107, .12);
+  border: .5vmin dashed #d9cfe8;
+}
+.sh-pal[data-has] .sh-plate { border: .5vmin solid #7ed957; }
+.sh-plate .tile {
+  position: absolute; inset: -20% 0 10%;
+  width: auto; height: auto;
+  font-size: calc(var(--pw) * .44);
+  background: transparent; box-shadow: none;
+}
+
+.g-share .sh-pile { gap: 2.5vmin; }
+.g-share .sh-pile .tile { --it: min(21vw, 14vh); }
+@media (orientation: landscape) { .g-share .sh-pile .tile { --it: min(14vw, 24vh); } }
