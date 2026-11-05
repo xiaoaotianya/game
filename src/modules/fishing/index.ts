@@ -41,6 +41,7 @@ export default function create(): ModuleImpl {
   let paused = false;
   let gen = 0;
   let target: PackItem | null = null;
+  let lastTarget = ''; // 上一个目标的 id，下一次尽量换一个
   let raf = 0;
   let dead = false;
   let last = 0;
@@ -91,6 +92,13 @@ export default function create(): ModuleImpl {
     [...dots.children].forEach((d) => d.classList.remove('on'));
     laneN = COUNT[lvl()] ?? 4;
     layout();
+    // 矮屏（横屏手机）放不下这么多泳道时减少鱼的数量，保证相邻两条鱼的点击区不重叠
+    const room = H - sky - L0 - fs * 1.35 - 8;
+    const cap = Math.max(2, Math.floor(room / fs) + 1);
+    if (laneN > cap) {
+      laneN = cap;
+      layout();
+    }
     const n = laneN;
     // 一开始就在水里各处游，按泳道错开
     for (let i = 0; i < n; i++) spawn(i, W * (0.12 + 0.76 * Math.random()));
@@ -132,11 +140,17 @@ export default function create(): ModuleImpl {
 
   function ask() {
     if (paused) return;
-    const swim = fishes.filter((f) => f.state === 'swim');
-    if (!swim.length) return;
+    // 只从屏幕上看得见的鱼里选（刚补进来的还在屏幕外游）
+    const swim = fishes.filter((f) => f.state === 'swim' && f.x > fs * 0.6 && f.x < W - fs * 0.6);
+    if (!swim.length) {
+      const g = gen;
+      sdk.later(() => g === gen && ask(), 600);
+      return;
+    }
     // 尽量换一个和上次不同的目标
-    const others = swim.filter((f) => f.it.id !== target?.id);
+    const others = swim.filter((f) => f.it.id !== lastTarget);
     target = pick(others.length ? others : swim).it;
+    lastTarget = target.id;
     sayTarget();
   }
 
@@ -154,14 +168,15 @@ export default function create(): ModuleImpl {
         mistakes++;
         sdk.sfx.boing();
         f.flee = performance.now() + 1500;
-        f.body.classList.remove('fi-wag');
+        f.body.classList.remove('fi-wag', 'fi-glow');
         void f.body.offsetWidth;
         f.body.classList.add('fi-wag');
         sayTarget();
         return;
       }
     }
-    // 钩住：鱼停下，小船开过去，放线
+    // 钩住：鱼停下，小船开过去，放线。目标已钓到，下一句说出新目标前点别的不算错
+    target = null;
     f.state = 'hooked';
     f.body.classList.remove('fi-wag', 'fi-glow');
     hooked = f;
@@ -267,6 +282,13 @@ export default function create(): ModuleImpl {
 
   function onResize() {
     layout();
+    // 转屏后把鱼拉回屏幕内、对齐到新的泳道
+    for (const f of fishes) {
+      if (f.state !== 'swim') continue;
+      f.x = Math.min(Math.max(f.x, fs / 2), W - fs / 2);
+      f.y = laneY(f.lane, laneN);
+      place(f);
+    }
   }
 
   return {

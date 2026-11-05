@@ -8,8 +8,8 @@ import './style.css';
 const N = 200; // 路径采样点数
 const STEP = 6; // 每次 pointermove 最多前进的采样点数
 const SVG = 'http://www.w3.org/2000/svg';
-// 插画里车头朝右的车，其余默认朝左
-const FACE_RIGHT = new Set(['ambulance', 'train', 'tractor']);
+// 插画里车头朝右的车（对照 public/art/items 核对过），其余都朝左
+const FACE_RIGHT = new Set(['train', 'bike']);
 // 只用在马路上跑的车
 const ROAD = new Set(['car', 'bus', 'firetruck', 'police', 'ambulance', 'train', 'bike', 'tractor']);
 
@@ -32,6 +32,7 @@ export default function create(): ModuleImpl {
   let RW = 80; // 路宽
   let held = -1;
   let stalled = false;
+  let stalls = 0; // 本轮开出马路的次数，折半计失误
   let lastWarn = 0;
   let done = true;
   let gen = 0;
@@ -115,6 +116,7 @@ export default function create(): ModuleImpl {
     cur = 0;
     faceR = null;
     stalled = false;
+    stalls = 0;
     held = -1;
     level = Math.min(2, sdk.progress.level());
     const pool = items.filter((x) => x !== it);
@@ -123,6 +125,9 @@ export default function create(): ModuleImpl {
     car.classList.remove('tr-home', 'tr-pop');
     void car.offsetWidth;
     car.classList.add('tr-pop');
+    // 弹出动画放完就去掉，否则它的选择器优先级更高，会盖住 wiggle
+    const g0 = gen;
+    sdk.later(() => g0 === gen && car.classList.remove('tr-pop'), 450);
     house.classList.remove('on');
     build();
     sdk.say({ zh: `${it.name.zh}要回家啦，拖着它沿着马路开`, en: `The ${it.name.en} wants to go home. Drive it along the road!` });
@@ -149,6 +154,7 @@ export default function create(): ModuleImpl {
     if (bd > RW * 1.5) {
       if (!stalled) {
         stalled = true;
+        stalls++;
         sdk.fx.wiggle(carIn);
         const now = Date.now();
         if (now - lastWarn > 4000) {
@@ -191,10 +197,16 @@ export default function create(): ModuleImpl {
       sdk.sfx.ding(7);
       const c = sdk.fx.centerOf(house);
       sdk.fx.burst(c.x, c.y, ['✨', '⭐', '💛'], 10);
-      sdk.say({ zh: '嘀嘀，到家啦', en: "Beep beep! We're home!" });
+      // 每辆车用自己的声音（小汽车嘀嘀、火车呜呜……），没有声音的就只说名字；读完再庆祝
+      const snd = it.sound;
+      const enSnd = snd ? snd.en[0].toUpperCase() + snd.en.slice(1) + '! ' : '';
+      sdk.say(
+        { zh: `${snd ? snd.zh + '，' : ''}${it.name.zh}到家啦`, en: `${enSnd}The ${it.name.en} is home!` },
+        () => g === gen && sdk.reward.celebrate(next),
+      );
     }, 450);
-    sdk.progress.round({ mistakes: 0 });
-    sdk.later(() => g === gen && sdk.reward.celebrate(next), 1700);
+    // 偶尔开出去不算，总是开出去才降级
+    sdk.progress.round({ mistakes: Math.floor(stalls / 2) });
   }
 
   function onResize() {

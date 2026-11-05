@@ -32,7 +32,7 @@ onMounted(async () => {
     preload((pack?.items ?? []).flatMap((it) => (it.image ? [it.image] : []))),
   ]);
   if (!alive || !stage.value) return;
-  const created = createSDK(manifest, activity);
+  const created = createSDK(manifest, activity, { onRoundBoundary: () => (lastAct = Date.now()) });
   dispose = created.dispose;
   impl = mod.default();
   impl.mount(stage.value, created.sdk, { activity, pack });

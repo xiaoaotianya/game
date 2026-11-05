@@ -30,6 +30,8 @@ export default function create(): ModuleImpl {
     sdk.say({ zh: `${e.name.zh}。${e.explain.zh}`, en: `${e.name.en}. ${e.explain.en}` });
   }
 
+  let partying = false;
+
   function render(dir: 1 | -1 | 0) {
     const e = order[i];
     const card = h('emo-card');
@@ -50,18 +52,19 @@ export default function create(): ModuleImpl {
 
     if (++seen % ROUND_SIZE === 0) {
       sdk.progress.round({ mistakes: 0 });
-      // 等名字读完再庆祝
-      sdk.later(() => sdk.reward.celebrate(), 1500);
+      // 庆祝期间不翻卡，免得快速连点记两轮、叠两次庆祝；等名字读完再庆祝
+      partying = true;
+      sdk.later(() => sdk.reward.celebrate(() => (partying = false)), 1500);
     }
   }
 
   function go(dir: 1 | -1) {
+    if (partying) return;
     i = (i + dir + order.length) % order.length;
-    // 一圈看完重新洗牌（避免和刚看过的那张重复）
+    // 一圈看完重新洗牌：刚看过的那张放到末尾，开头不会重复，往回翻也还是它
     if (i === 0 && dir > 0) {
       const last = order[order.length - 1];
-      do order = shuffle(EMOTIONS);
-      while (order[0] === last);
+      order = [...shuffle(EMOTIONS.filter((e) => e !== last)), last];
     }
     sdk.sfx.ding(dir > 0 ? 2 : 0);
     render(dir);

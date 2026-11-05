@@ -26,8 +26,14 @@ function praise(): Text {
   return { zh: n + p.zh, en: p.en.replace('!', enName + '!') };
 }
 
-export function createSDK(manifest: ModuleManifest, activity: Activity) {
+export interface SDKHooks {
+  /** 一轮结束 / 庆祝结束时调用，外壳据此重置「发呆」计时，避免新一轮刚开始就弹提示 */
+  onRoundBoundary?: () => void;
+}
+
+export function createSDK(manifest: ModuleManifest, activity: Activity, hooks: SDKHooks = {}) {
   const timers: number[] = [];
+  let alive = true;
   const overlays: HTMLElement[] = [];
   let roundStart = Date.now();
 
@@ -38,7 +44,7 @@ export function createSDK(manifest: ModuleManifest, activity: Activity) {
   const sdk: SDK = {
     lang: () => settings.lang,
     label,
-    say: (t) => voice.say(t),
+    say: (t, done) => voice.say(t, done && (() => alive && done())),
     sfx,
     buzz,
     later,
@@ -58,6 +64,7 @@ export function createSDK(manifest: ModuleManifest, activity: Activity) {
         );
         later(() => {
           box.remove();
+          hooks.onRoundBoundary?.();
           done?.();
         }, 2600);
       },
@@ -77,11 +84,13 @@ export function createSDK(manifest: ModuleManifest, activity: Activity) {
           manifest.levels,
         );
         roundStart = Date.now();
+        hooks.onRoundBoundary?.();
       },
     },
   };
 
   function dispose() {
+    alive = false;
     timers.forEach(clearTimeout);
     timers.length = 0;
     overlays.forEach((o) => o.remove());

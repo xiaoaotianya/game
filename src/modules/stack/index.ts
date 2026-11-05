@@ -74,7 +74,7 @@ export default function create(): ModuleImpl {
 
   function newBlock(): HTMLElement {
     const k = made++;
-    const el = h('st-block', `<span>${DECO[k % DECO.length]}</span>`);
+    const el = h('st-block', `<div class="st-face"><span>${DECO[k % DECO.length]}</span></div>`);
     el.style.setProperty('--c', COLORS[k % COLORS.length]);
     return el;
   }

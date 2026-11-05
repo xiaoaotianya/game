@@ -44,14 +44,6 @@ export default function create(): ModuleImpl {
   let filled = 0;
   let done = false;
 
-  /** 估一句话读完要多久，连读时用来排时间（say 会打断上一句） */
-  function speakMs(t: Text) {
-    const zh = t.zh.length * 300 + 400;
-    const en = t.en.split(/\s+/).length * 380 + 400;
-    const l = sdk.lang();
-    return l === 'zh' ? zh : l === 'en' ? en : zh + en;
-  }
-
   function next() {
     done = false;
     filled = 0;
@@ -91,8 +83,9 @@ export default function create(): ModuleImpl {
           sdk.input.flyTo(t, x);
           sdk.sfx.ding(filled);
           sdk.buzz();
-          sdk.say(stepLine(st, idx, n));
-          if (++filled === n) finish(use, cards, mistakes);
+          // 最后一张：这句读完再开始整段回顾
+          if (++filled === n) sdk.say(stepLine(st, idx, n), () => finish(use, cards, mistakes));
+          else sdk.say(stepLine(st, idx, n));
         },
         onMiss: (x) => {
           if (!x || done) return;
@@ -117,24 +110,22 @@ export default function create(): ModuleImpl {
     bot.style.minHeight = bot.offsetHeight + 'px';
   }
 
-  /** 排完：先上报本轮，再依次高亮每张卡并连读一遍，最后庆祝 */
+  /** 排完：先上报本轮，再依次高亮每张卡并连读一遍（每句读完再读下一句），最后庆祝 */
   function finish(use: Step[], cards: HTMLElement[], mistakes: number) {
     done = true;
     sdk.progress.round({ mistakes });
     const n = use.length;
-    let t = speakMs(stepLine(use[n - 1], n - 1, n)) + 300; // 等最后一步读完
-    use.forEach((st, i) => {
-      const line = stepLine(st, i, n);
-      sdk.later(() => {
-        cards.forEach((c) => c.classList.remove('od-lit'));
-        cards[i].classList.add('od-lit');
-        sdk.sfx.ding(i);
-        sdk.say(line);
-      }, t);
-      t += speakMs(line);
-    });
-    sdk.later(() => cards.forEach((c) => c.classList.remove('od-lit')), t);
-    sdk.later(() => sdk.reward.celebrate(next), t + 300);
+    const step = (i: number) => {
+      cards.forEach((c) => c.classList.remove('od-lit'));
+      if (i >= n) {
+        sdk.later(() => sdk.reward.celebrate(next), 300);
+        return;
+      }
+      cards[i].classList.add('od-lit');
+      sdk.sfx.ding(i);
+      sdk.say(stepLine(use[i], i, n), () => step(i + 1));
+    };
+    sdk.later(() => step(0), 300);
   }
 
   return {

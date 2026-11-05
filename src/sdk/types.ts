@@ -111,7 +111,9 @@ export interface SDK {
   /** 按语言设置显示的文字 */
   label(t: Text): string;
   /** 语音播报（按语言设置读中文/英文/两者） */
-  say(t: Text | string): void;
+  /** done：读完后回调（被打断或系统语音不可用时也会回调；离开活动后不再回调）。
+   * 需要「说完再做下一步」时用它，不要按固定时长猜。 */
+  say(t: Text | string, done?: () => void): void;
   sfx: {
     pop(): void;
     ding(step?: number): void;

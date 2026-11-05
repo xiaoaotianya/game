@@ -1,4 +1,4 @@
-// 排排队：同一个东西几种大小，从小到大拖进台阶格子。难度 0/1 = 3/4 个
+// 排排队：同一个东西几种大小，按大小放进台阶上一样大的剪影格子，放完就是从小到大。难度 0/1 = 3/4 个
 import type { ContentPack, ModuleImpl, PackItem, SDK, Text } from '@/sdk';
 import { h, pick, shuffle } from '@/sdk/dom';
 import { pic } from '@/sdk/art';
@@ -49,24 +49,32 @@ export default function create(): ModuleImpl {
       slot.style.setProperty('--sc', String(sc));
       stairs.appendChild(slot);
     });
-    stairs.children[0].classList.add('sz-next');
     tray = h('sz-tray');
     s.append(stairs, tray);
+    const slotOf = (sc: number) => stairs.children[scales.indexOf(sc)] as HTMLElement;
+    // 提示框：标出还没放的里面最小的那一格
+    const markNext = () => {
+      [...stairs.children].forEach((x) => x.classList.remove('sz-next'));
+      stairs.querySelector('.sz-slot:not(.sz-done)')?.classList.add('sz-next');
+    };
+    markNext();
 
-    const place = (t: HTMLElement) => {
-      const slot = stairs.children[placed] as HTMLElement;
-      const k = placed++;
+    // 按大小对号入座：放进和自己一样大的剪影格；放的先后不限，放完自然就是从小到大
+    const place = (t: HTMLElement, sc: number) => {
+      const slot = slotOf(sc);
+      const k = scales.indexOf(sc);
+      placed++;
       t.dataset.locked = '1';
-      slot.classList.remove('sz-next');
       slot.classList.add('sz-done');
-      stairs.children[placed]?.classList.add('sz-next');
+      markNext();
       sdk.input.flyTo(t, slot);
       sdk.sfx.ding(k * 2);
       sdk.buzz();
       sdk.say(words[k]);
       if (placed < n) return;
       over = true;
-      // 排完：从小到大依次跳一下
+      sdk.progress.round({ mistakes });
+      // 排完：从小到大依次跳一下，再读总结，读完庆祝
       [...stairs.children].forEach((x, i) =>
         sdk.later(() => {
           const p = x.querySelector('.sz-piece');
@@ -77,18 +85,17 @@ export default function create(): ModuleImpl {
           sdk.sfx.ding(i * 2 + 2);
         }, 700 + i * 280),
       );
-      sdk.later(() => sdk.say({ zh: '从小到大排好啦', en: 'Small to big, all lined up!' }), 700 + n * 280);
-      sdk.progress.round({ mistakes });
-      sdk.later(() => sdk.reward.celebrate(next), 2800 + n * 280);
+      sdk.later(
+        () => sdk.say({ zh: '从小到大排好啦', en: 'Small to big, all lined up!' }, () => sdk.reward.celebrate(next)),
+        700 + n * 280,
+      );
     };
 
     const wrong = (t: HTMLElement) => {
       mistakes++;
       sdk.sfx.boing();
       sdk.fx.wiggle(t);
-      sdk.say(placed === 0
-        ? { zh: '先找最小的', en: 'Find the smallest one first' }
-        : { zh: '找剩下最小的', en: 'Find the smallest one left' });
+      sdk.say({ zh: '找一样大的格子', en: 'Find the spot that is the same size' });
     };
 
     shuffle(scales).forEach((sc) => {
@@ -96,18 +103,13 @@ export default function create(): ModuleImpl {
       t.style.setProperty('--sc', String(sc));
       t.dataset.sc = String(sc);
       tray.appendChild(t);
-      const right = () => sc === scales[placed];
       sdk.input.draggable(t, {
-        // 落在任一空格都算：拿对了就自动排进下一格
         targets: () => [...stairs.children].filter((x) => !x.classList.contains('sz-done')),
-        accept: () => !over && right(),
-        onDrop: () => place(t),
+        accept: (x) => !over && x === slotOf(sc),
+        onDrop: () => place(t, sc),
         onMiss: (x) => { if (x && !over) wrong(t); },
-        onTap: () => {
-          if (over) return;
-          if (right()) place(t);
-          else wrong(t);
-        },
+        // 点一下：自己飞进对应的格子
+        onTap: () => { if (!over) place(t, sc); },
       });
     });
     // 锁住下排高度，拖走后上排不跳
@@ -123,14 +125,15 @@ export default function create(): ModuleImpl {
       next();
     },
     hint() {
-      const want = scales[placed];
-      const t = tray?.querySelector<HTMLElement>(`.sz-piece:not([data-locked])[data-sc="${want}"]`);
+      // 还没放的里面最小的那个
+      const left = [...(tray?.querySelectorAll<HTMLElement>('.sz-piece:not([data-locked])') ?? [])];
+      const t = left.sort((a, b) => Number(a.dataset.sc) - Number(b.dataset.sc))[0];
       if (!t) return;
       t.classList.remove('glow');
       void t.offsetWidth;
       t.classList.add('glow');
       sdk.later(() => t.classList.remove('glow'), 1900);
-      sdk.say(placed === 0 ? { zh: '先找最小的', en: 'Find the smallest one first' } : { zh: '找剩下最小的', en: 'Find the smallest one left' });
+      sdk.say({ zh: '把它放进一样大的格子', en: 'Put it in the spot that is the same size' });
     },
   };
 }

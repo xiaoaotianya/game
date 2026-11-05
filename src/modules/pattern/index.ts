@@ -49,9 +49,9 @@ export default function create(): ModuleImpl {
   let over = false;
 
   /** 整行依次跳一下，同时读出全部名字 */
-  function sing(list: PackItem[], speak = true) {
+  function sing(list: PackItem[], speak = true, done?: () => void) {
     const g = ++gen;
-    if (speak) sdk.say(joinNames(list));
+    if (speak) sdk.say(joinNames(list), done && (() => g === gen && done()));
     list.forEach((_, i) =>
       sdk.later(() => {
         if (g !== gen) return;
@@ -127,8 +127,8 @@ export default function create(): ModuleImpl {
         sdk.buzz();
         sdk.progress.round({ mistakes });
         // 填好后整段再唱一遍，末尾读正确项
-        sdk.later(() => sing(seq), 600);
-        sdk.later(() => sdk.reward.celebrate(next), 600 + len * BEAT + 1800);
+        // 整段读完再庆祝（庆祝的夸奖会打断朗读，最后一个正是答案）
+        sdk.later(() => sing(seq, true, () => sdk.later(() => sdk.reward.celebrate(next), 300)), 600);
         return;
       }
       mistakes++;

@@ -17,7 +17,8 @@
 }
 .sh-ani { font-size: calc(var(--pw) * .78); }
 .sh-ani.sh-hop { animation: shHop .5s ease-in-out; }
-.sh-pal.sh-happy .sh-ani { animation: shHop .6s ease-in-out 3; }
+.sh-pal.sh-happy .sh-ani { animation: shParty .6s ease-in-out 3; }
+@keyframes shParty { 40% { translate: 0 -3vmin; scale: 1.1; } }
 @keyframes shHop { 40% { translate: 0 -3vmin; scale: 1.1; } }
 
 /* 盘子：椭圆白盘，有了东西就镶绿边 */

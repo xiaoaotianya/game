@@ -34,6 +34,7 @@ export default function create(): ModuleImpl {
   let sdk: SDK;
   let s: HTMLElement;
   let round = 0;
+  let gen = 0; // 每轮结束递增，旧回调作废
 
   function next() {
     const n = 2 + Math.min(sdk.progress.level(), 2);
@@ -55,7 +56,7 @@ export default function create(): ModuleImpl {
     const pile = h('row sh-pile');
     s.append(top, pile);
 
-    sdk.say({ zh: `每个小动物分一个${f.zh}`, en: `Give each friend one ${f.en}` });
+    sdk.say({ zh: `每个小动物分一${f.u}${f.zh}`, en: `Give each friend one ${f.en}` });
 
     const has = (col: Element) => (col as HTMLElement).dataset.has === '1';
 
@@ -75,14 +76,23 @@ export default function create(): ModuleImpl {
       if (k < n) return;
       over = true;
       sdk.progress.round({ mistakes });
+      const g = ++gen;
       sdk.later(() => {
-        cols.forEach((c) => c.classList.add('sh-happy'));
-        sdk.say({
-          zh: `每个小动物都有一个${f.zh}，一共${ZH_QTY[n]}${f.u}`,
-          en: `Every friend has one ${f.en}. ${EN_NUM[n][0].toUpperCase() + EN_NUM[n].slice(1)} ${f.ens} in all!`,
+        if (g !== gen) return;
+        // 先去掉分到时的单跳动画，大家一起跳的动画才会重新开始
+        cols.forEach((c) => {
+          c.querySelector('.sh-ani')!.classList.remove('sh-hop');
+          c.classList.add('sh-happy');
         });
+        // 读完总结再庆祝
+        sdk.say(
+          {
+            zh: `每个小动物都有一${f.u}${f.zh}，一共${ZH_QTY[n]}${f.u}`,
+            en: `Every friend has one ${f.en}. ${EN_NUM[n][0].toUpperCase() + EN_NUM[n].slice(1)} ${f.ens} in all!`,
+          },
+          () => g === gen && sdk.reward.celebrate(next),
+        );
       }, 900);
-      sdk.later(() => sdk.reward.celebrate(next), 4200);
     };
 
     for (let i = 0; i < n; i++) {

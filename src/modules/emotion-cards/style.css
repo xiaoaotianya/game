@@ -62,3 +62,5 @@
   .emo-holder { order: 0; flex-basis: 100%; max-width: min(76vw, 50vh); }
   .emo-nav { order: 1; margin: 3vmin 8vw 0; }
 }
+/* 箭头始终在卡片上面：新卡飞进来时不会挡住第二下点击 */
+.emo-nav { position: relative; z-index: 2; }

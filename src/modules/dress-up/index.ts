@@ -14,6 +14,8 @@ interface Wear {
   icon: string;
   name: Text;
   ok: Weather[];
+  /** 这些天气里穿戴也不算错（比如袜子天天都穿），所以不拿来当干扰项 */
+  fine?: Weather[];
   spot: Spot;
   verb: Text;   // 中文是动词「带 / 穿 / 戴」，英文是冠词
   line: Text;   // 放好后读的短句
@@ -24,19 +26,19 @@ const WEARS: Wear[] = [
     verb: { zh: '带', en: 'the' }, line: { zh: '雨伞，下雨不怕淋湿', en: 'Umbrella, keeps you dry' } },
   { id: 'boots', icon: '👢', name: { zh: '雨靴', en: 'rain boots' }, ok: ['rain'], spot: 'feet',
     verb: { zh: '穿', en: 'the' }, line: { zh: '雨靴，踩水不湿脚', en: 'Rain boots, splash splash' } },
-  { id: 'cap', icon: 'items/cap', name: { zh: '帽子', en: 'cap' }, ok: ['sun'], spot: 'head',
+  { id: 'cap', icon: 'items/cap', name: { zh: '帽子', en: 'cap' }, ok: ['sun'], fine: ['cold', 'rain'], spot: 'head',
     verb: { zh: '戴', en: 'a' }, line: { zh: '帽子，太阳晒不着', en: 'A cap, shade from the sun' } },
   { id: 'glasses', icon: '🕶️', name: { zh: '太阳镜', en: 'sunglasses' }, ok: ['sun'], spot: 'face',
     verb: { zh: '戴', en: '' }, line: { zh: '太阳镜，阳光不刺眼', en: 'Sunglasses, so bright' } },
   { id: 'tshirt', icon: '👕', name: { zh: 'T恤', en: 'T-shirt' }, ok: ['sun'], spot: 'body',
     verb: { zh: '穿', en: 'a' }, line: { zh: 'T恤，凉快又舒服', en: 'A T-shirt, nice and cool' } },
-  { id: 'coat', icon: '🧥', name: { zh: '外套', en: 'coat' }, ok: ['cold'], spot: 'body',
+  { id: 'coat', icon: '🧥', name: { zh: '外套', en: 'coat' }, ok: ['cold'], fine: ['rain'], spot: 'body',
     verb: { zh: '穿', en: 'a' }, line: { zh: '外套，穿上暖暖的', en: 'A coat, nice and warm' } },
   { id: 'scarf', icon: '🧣', name: { zh: '围巾', en: 'scarf' }, ok: ['cold'], spot: 'neck',
     verb: { zh: '戴', en: 'a' }, line: { zh: '围巾，脖子不冷', en: 'A scarf, warm neck' } },
   { id: 'gloves', icon: '🧤', name: { zh: '手套', en: 'gloves' }, ok: ['cold'], spot: 'hand',
     verb: { zh: '戴', en: '' }, line: { zh: '手套，小手暖暖的', en: 'Gloves, warm hands' } },
-  { id: 'socks', icon: 'items/socks', name: { zh: '袜子', en: 'socks' }, ok: ['cold'], spot: 'feet',
+  { id: 'socks', icon: 'items/socks', name: { zh: '袜子', en: 'socks' }, ok: ['cold'], fine: ['sun', 'rain'], spot: 'feet',
     verb: { zh: '穿', en: '' }, line: { zh: '袜子，小脚暖暖的', en: 'Socks, warm feet' } },
 ];
 
@@ -65,14 +67,15 @@ export default function create(): ModuleImpl {
     const first = pool[0];
     const second = pool.find((w) => w !== first && w.spot !== first.spot) ?? pool[1];
     goods = [first, second];
-    const bads = shuffle(WEARS.filter((w) => !w.ok.includes(sky))).slice(0, n - 2);
+    // 干扰项只用这种天气明显不合适的东西
+    const bads = shuffle(WEARS.filter((w) => !w.ok.includes(sky) && !w.fine?.includes(sky))).slice(0, n - 2);
     let left = 2;
     let mistakes = 0;
     s.innerHTML = '';
 
     const stage = h('dr2-stage');
     const skyEl = h(`dr2-sky dr2-sky-${sky} emoji`, iconHtml(SKY[sky].icon));
-    skyEl.addEventListener('pointerdown', () => sdk.say(SKY[sky].call));
+    skyEl.addEventListener('pointerdown', () => !done && sdk.say(SKY[sky].call));
     bear = h('dr2-bear', `<span class="dr2-me emoji">${iconHtml('items/bear')}</span>`);
     bear.addEventListener('pointerdown', () => !done && sdk.say(SKY[sky].call));
     goods.forEach((w) => {
@@ -93,19 +96,24 @@ export default function create(): ModuleImpl {
         onTap: () => sdk.say(w.name),
         onDrop: () => {
           t.dataset.locked = '1';
+          // 原位留一个占位，托盘里其他东西不会挪位置
+          const ph = h('dr2-ph');
+          ph.style.width = t.offsetWidth + 'px';
+          ph.style.height = t.offsetHeight + 'px';
+          t.before(ph);
           sdk.input.flyTo(t, bear.querySelector(`.dr2-spot[data-id="${w.id}"]`)!, 'dr2-on');
           sdk.sfx.ding(2 - left);
           sdk.buzz();
-          sdk.say(w.line);
-          if (--left === 0) {
+          if (--left > 0) sdk.say(w.line);
+          if (left === 0) {
             done = true;
             tray.querySelectorAll<HTMLElement>('.tile').forEach((x) => (x.dataset.locked = '1'));
             sdk.progress.round({ mistakes });
-            sdk.later(() => {
+            // 等这件的短句读完，再说出发，读完庆祝
+            sdk.say(w.line, () => {
               bear.classList.add('dr2-happy');
-              sdk.say({ zh: '小熊准备好啦，出发！', en: 'Bear is ready. Let\'s go!' });
-            }, 2200);
-            sdk.later(() => sdk.reward.celebrate(next), 4200);
+              sdk.say({ zh: '小熊准备好啦，出发！', en: "Bear is ready. Let's go!" }, () => sdk.reward.celebrate(next));
+            });
           }
         },
         onMiss: (x) => {

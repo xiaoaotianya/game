@@ -61,6 +61,18 @@ export default function create(): ModuleImpl {
     }
   }
 
+  function clampToy(t: HTMLElement) {
+    if (t.dataset.locked) return;
+    const W = room.clientWidth, H = room.clientHeight, T = t.offsetWidth;
+    const pad = Math.max(8, W * 0.03);
+    const x = parseFloat(t.style.left) || 0, y = parseFloat(t.style.top) || 0;
+    const nx = Math.min(Math.max(x, pad), W - T - pad), ny = Math.min(Math.max(y, H * 0.3), H - T - pad);
+    if (nx !== x || ny !== y) {
+      t.style.left = nx + 'px';
+      t.style.top = ny + 'px';
+    }
+  }
+
   function next() {
     done = false;
     const n = COUNT[sdk.progress.level()] ?? 3;
@@ -84,6 +96,8 @@ export default function create(): ModuleImpl {
         targets: () => [box],
         accept: () => true,
         onTap: () => sdk.say(it.name),
+        // 拖着的时候转了屏，弹回的旧坐标可能在屏幕外：拉回地板上
+        onMiss: () => sdk.later(() => clampToy(t), 60),
         onDrop: () => {
           t.dataset.locked = '1';
           sdk.input.flyTo(t, hold, 'td-drop');
@@ -112,7 +126,8 @@ export default function create(): ModuleImpl {
       lid.classList.add('td-shut');
       s.classList.add('td-clean');
       sdk.sfx.win();
-      sdk.say({ zh: '房间好干净呀', en: 'The room is so clean!' });
+      // 读完再庆祝
+      sdk.say({ zh: '房间好干净呀', en: 'The room is so clean!' }, () => sdk.reward.celebrate(next));
       const r = room.getBoundingClientRect();
       for (let i = 0; i < 4; i++) {
         sdk.later(() => sdk.fx.burst(
@@ -122,7 +137,6 @@ export default function create(): ModuleImpl {
         ), i * 220);
       }
     }, 900);
-    sdk.later(() => sdk.reward.celebrate(next), 3000);
   }
 
   return {

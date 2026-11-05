@@ -45,7 +45,7 @@ const STORIES: Story[] = [
   {
     animal: 'items/dog', who: { zh: '小狗', en: 'Puppy' }, prop: '🎁', fx: 'pop', feel: 'surprised',
     story: { zh: '突然跳出来一个大礼物', en: 'A big present popped out' },
-    reply: { zh: '哇，快打开看看吧', en: "Wow, let's open it" }, avoid: ['happy'],
+    reply: { zh: '哇，快打开看看吧', en: "Wow, let's open it" }, avoid: ['happy', 'scared'],
   },
   {
     animal: 'items/panda', who: { zh: '熊猫', en: 'Panda' }, prop: 'items/bamboo', fx: 'bounce', feel: 'happy',
@@ -105,7 +105,7 @@ export default function create(): ModuleImpl {
     const pool = shuffle(EMOTIONS.filter((e) => e.id !== st.feel && !st.avoid?.includes(e.id)));
     const opts = shuffle([st.feel, ...pool.slice(0, n - 1).map((e) => e.id)]);
     let mistakes = 0;
-    const tried = new Set<EmotionId>();
+    let lastWrong = 0; // 连点同一张错脸（手抖）只算一次
     locked = false;
     s.innerHTML = '';
 
@@ -144,16 +144,20 @@ export default function create(): ModuleImpl {
           sdk.fx.burst(c.x, c.y, ['⭐', '✨', '💖'], 10);
           sdk.sfx.ding(2);
           sdk.buzz();
-          sdk.say({
-            zh: `对，${st.who.zh}很${e.name.zh}。${st.reply.zh}`,
-            en: `Yes, ${st.who.en} is ${e.name.en}. ${st.reply.en}`,
-          });
           sdk.progress.round({ mistakes });
-          // 等回应读完再庆祝
-          sdk.later(() => g === gen && sdk.reward.celebrate(next), sdk.lang() === 'both' ? 5200 : 3400);
+          // 等回应读完再庆祝（庆祝会说夸奖的话，提前开始会把回应打断）
+          sdk.say(
+            {
+              zh: `对，${st.who.zh}很${e.name.zh}。${st.reply.zh}`,
+              en: `Yes, ${st.who.en} is ${e.name.en}. ${st.reply.en}`,
+            },
+            () => g === gen && sdk.later(() => g === gen && sdk.reward.celebrate(next), 300),
+          );
         } else {
-          if (!tried.has(id)) mistakes++;
-          tried.add(id);
+          // 每次点错都算（否则一轮最多记 2 次，难度永远降不下来）
+          const now = Date.now();
+          if (now - lastWrong > 600) mistakes++;
+          lastWrong = now;
           sdk.sfx.boing();
           sdk.fx.wiggle(t);
           playFx(scene);

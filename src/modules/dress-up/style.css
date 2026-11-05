@@ -63,3 +63,4 @@
 @media (orientation: landscape) {
   .g-dress .dr2-tray, .g-dress .dr2-tray.dr2-n4, .g-dress .dr2-tray.dr2-n5 { --it: max(80px, min(13vw, 20vh)); gap: 3vmin; }
 }
+.dr2-ph { flex: none; visibility: hidden; }
