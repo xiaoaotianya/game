@@ -115,6 +115,7 @@ export interface SDK {
     boing(): void;
     win(): void;
     note(freq: number): void;
+    drum(kind: 'big' | 'snare' | 'cymbal' | 'shaker'): void;
   };
   buzz(ms?: number): void;
   /** 定时器，离开模块时自动清理 */

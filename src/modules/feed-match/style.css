@@ -1,0 +1,32 @@
+.g-fm { --ts: min(28vw, 20vh); }
+.g-fm .fm-top:has(> :nth-child(4)) { --ts: min(21vw, 15vh); }
+@media (orientation: landscape) {
+  .g-fm { --ts: min(18vw, 32vh); }
+  .g-fm .fm-top:has(> :nth-child(4)) { --ts: min(16vw, 28vh); }
+}
+.fm-target {
+  position: relative;
+  width: var(--ts); height: var(--ts);
+  display: grid; place-items: center;
+  border-radius: 26%;
+  background: rgba(255, 255, 255, .75);
+  border: .7vmin dashed rgba(74, 59, 107, .2);
+  cursor: pointer;
+}
+.fm-mode-home .fm-target { background: linear-gradient(#e7f5ff, #d3f9d8); }
+.fm-target.done { border: .7vmin solid #7ed957; background: #fff; }
+.fm-face { font-size: calc(var(--ts) * .74); transition: scale .2s; }
+.fm-spot {
+  position: absolute; right: -8%; bottom: -8%;
+  width: 46%; height: 46%;
+  display: grid; place-items: center;
+  pointer-events: none;
+}
+.fm-mode-home .fm-spot { right: auto; left: 50%; bottom: 8%; translate: -50% 0; }
+.fm-spot .tile { width: 100%; height: 100%; font-size: calc(var(--ts) * .36); background: transparent; box-shadow: none; }
+.fm-spot .tile.fm-eat { animation: fmEat .6s .45s ease-in forwards; }
+@keyframes fmEat { to { scale: .1; opacity: 0; translate: -60% -60%; } }
+.fm-target.munch .fm-face { animation: fmMunch .25s ease-in-out 4; }
+@keyframes fmMunch { 50% { scale: 1.08 .92; } }
+.fm-spot .tile.fm-home { animation: fmBounce .7s .4s ease-in-out 2; }
+@keyframes fmBounce { 50% { translate: 0 -25%; } }

@@ -121,4 +121,39 @@ export const modules: Record<string, ModuleManifest> = {
     levels: 1,
     load: () => import('./piano'),
   },
+  peek: {
+    id: 'peek',
+    kind: 'game',
+    skills: ['cognition', 'fine-motor', 'language'],
+    levels: 3, // 3 / 4 / 6 个洞
+    load: () => import('./peek'),
+  },
+  scratch: {
+    id: 'scratch',
+    kind: 'game',
+    skills: ['fine-motor', 'cognition', 'language'],
+    levels: 1,
+    load: () => import('./scratch'),
+  },
+  'shape-box': {
+    id: 'shape-box',
+    kind: 'game',
+    skills: ['color-shape', 'fine-motor', 'cognition'],
+    levels: 3, // 2 / 3 / 4 种洞
+    load: () => import('./shape-box'),
+  },
+  'feed-match': {
+    id: 'feed-match',
+    kind: 'game',
+    skills: ['cognition', 'language', 'english'],
+    levels: 3, // 2 / 3 / 4 对
+    load: () => import('./feed-match'),
+  },
+  drum: {
+    id: 'drum',
+    kind: 'game',
+    skills: ['music', 'fine-motor', 'cognition'],
+    levels: 3, // 跟我敲：2 / 3 / 4 下
+    load: () => import('./drum'),
+  },
 };

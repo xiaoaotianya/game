@@ -1,0 +1,69 @@
+.g-drum {
+  --ps: min(40vw, 22vh);
+  height: 100%;
+  display: flex; flex-direction: column; align-items: center; justify-content: space-evenly;
+  padding: calc(env(safe-area-inset-top) + var(--hb) + 1vmin) 3vw calc(env(safe-area-inset-bottom) + 3vmin);
+  background: radial-gradient(circle at 50% 20%, #fff9db, transparent 60%);
+}
+.dr-dancer { font-size: min(26vw, 16vh); }
+.dr-dancer.jump { animation: drJump .35s ease-out; }
+@keyframes drJump { 40% { translate: 0 -3vmin; rotate: -6deg; scale: 1.06; } }
+.dr-kit { display: grid; grid-template-columns: repeat(2, var(--ps)); gap: 4vmin; }
+@media (orientation: landscape) {
+  .g-drum { --ps: min(20vw, 36vh); }
+  .dr-kit { grid-template-columns: repeat(4, var(--ps)); }
+  .dr-dancer { font-size: min(14vw, 22vh); }
+}
+.dr-pad {
+  position: relative;
+  width: var(--ps); height: var(--ps);
+  display: grid; place-items: center;
+  border-radius: 24%;
+  background: rgba(255, 255, 255, .7);
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  transition: background .2s;
+}
+.dr-pad.hit .dr-shape { animation: drHit .22s ease-out; }
+@keyframes drHit { 40% { scale: .88; } }
+.dr-pad.lit { background: #ffe066; box-shadow: 0 0 0 1.2vmin #ffd43b, var(--shadow); }
+.dr-pad.ok { background: #b2f2bb; }
+.g-drum.listen .dr-pad { cursor: default; }
+.dr-shape { width: 78%; height: 78%; position: relative; }
+
+/* 大鼓：红色鼓身 + 白色鼓面 */
+.dr-big .dr-shape {
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff 0 52%, #f1f3f5 53% 60%, #fa5252 61% 100%);
+  box-shadow: inset 0 0 0 1vmin #c92a2a;
+}
+/* 小鼓：侧面圆柱 */
+.dr-snare .dr-shape {
+  height: 56%;
+  border-radius: 50% / 22%;
+  background:
+    repeating-linear-gradient(115deg, transparent 0 14%, #ffd43b 14% 17%),
+    linear-gradient(#4dabf7, #1c7ed6);
+  box-shadow: inset 0 1.4vmin 0 #e7f5ff, inset 0 -1vmin 0 #1864ab;
+}
+/* 镲：金色圆盘 + 支架 */
+.dr-cymbal .dr-shape {
+  height: 34%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 40%, #fff3bf 0 10%, #fcc419 12% 60%, #e67700 62% 100%);
+  box-shadow: 0 1vmin 0 rgba(0, 0, 0, .1);
+}
+.dr-cymbal .dr-shape::after { content: ''; position: absolute; left: 47%; top: 80%; width: 6%; height: 150%; background: #868e96; border-radius: 1vmin; z-index: -1; }
+.dr-pad.dr-cymbal.hit .dr-shape { animation: drTilt .4s ease-out; }
+@keyframes drTilt { 30% { rotate: -14deg; } 60% { rotate: 8deg; } }
+/* 沙锤：彩色椭圆 + 手柄 */
+.dr-shaker .dr-shape {
+  width: 46%; height: 52%; margin-bottom: 26%;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 30% 30%, #fff 0 8%, transparent 9%),
+    repeating-linear-gradient(0deg, #da77f2 0 18%, #f783ac 18% 36%, #ffd43b 36% 54%);
+}
+.dr-shaker .dr-shape::after { content: ''; position: absolute; left: 40%; top: 92%; width: 20%; height: 55%; background: #b07a4a; border-radius: 1vmin; }
+.dr-pad.dr-shaker.hit .dr-shape { animation: drShake .3s ease-in-out; }
+@keyframes drShake { 25% { rotate: 18deg; } 75% { rotate: -18deg; } }

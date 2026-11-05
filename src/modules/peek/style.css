@@ -1,0 +1,65 @@
+/* 躲猫猫：场景由 .pk-s-hole / .pk-s-sea / .pk-s-grass 决定配色 */
+.g-peek {
+  --ground: #a8e063; --ground2: #7cc35a;
+  --win: #6b4a2b; --rim: #8d6440;
+  height: 100%;
+  display: flex; flex-direction: column; align-items: center; justify-content: space-evenly;
+  padding: calc(env(safe-area-inset-top) + var(--hb) + 2vmin) 3vw calc(env(safe-area-inset-bottom) + 3vmin);
+  background: linear-gradient(180deg, transparent 30%, var(--ground) 30%, var(--ground2));
+}
+.g-peek.pk-s-sea { --ground: #74c0fc; --ground2: #1c7ed6; --win: #0b4f8a; --rim: #a5a5b5; }
+.g-peek.pk-s-grass { --ground: #c0eb75; --ground2: #82c91e; --win: transparent; --rim: #5c940d; }
+
+.pk-stars { display: flex; gap: 1vmin; padding: 1.2vmin 2.4vmin; background: rgba(255,255,255,.8); border-radius: 999px; box-shadow: var(--shadow); }
+.pk-star { width: 5vmin; height: 5vmin; border-radius: 50%; background: #e9e3f3; transition: background .3s, scale .3s; }
+.pk-star.on { background: #ffd43b; scale: 1.15; box-shadow: 0 0 1.5vmin #ffe066; }
+
+.pk-field { display: flex; flex-wrap: wrap; justify-content: center; gap: 6vmin 5vmin; max-width: calc(var(--hs) * 3 + 10vmin); }
+.g-peek { --hs: min(40vw, 22vh); }
+.pk-field[data-n="6"] { --hs: min(27vw, 18vh); }
+@media (orientation: landscape) {
+  .g-peek { --hs: min(20vw, 34vh); }
+  .pk-field { max-width: none; }
+  .pk-field[data-n="6"] { --hs: min(18vw, 26vh); max-width: calc(var(--hs) * 3 + 12vmin); }
+}
+
+.pk-hole { position: relative; width: var(--hs); height: var(--hs); cursor: pointer; border-radius: 20%; }
+/* 洞口：深色椭圆 */
+.pk-hole::before {
+  content: ''; position: absolute; left: 8%; right: 8%; bottom: 12%; height: 24%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 35%, color-mix(in srgb, var(--win) 70%, #000) 0 55%, var(--win) 75%);
+  box-shadow: 0 .6vmin 0 var(--rim);
+}
+/* 洞口窗：动物从洞口中线往上钻出来 */
+.pk-win { position: absolute; left: 0; right: 0; bottom: 24%; height: 110%; overflow: hidden; z-index: 1; }
+.pk-who {
+  position: absolute; left: 50%; bottom: 0;
+  font-size: calc(var(--hs) * .66);
+  transform: translate(-50%, 110%);
+  transition: transform .28s cubic-bezier(.3, 1.4, .5, 1);
+}
+.pk-hole.up .pk-who { transform: translate(-50%, 6%); }
+.pk-hole.hit .pk-who { animation: pkHit .5s ease-out; transform: translate(-50%, 6%); }
+@keyframes pkHit { 30% { scale: 1.25; rotate: -8deg; } 60% { rotate: 8deg; } }
+/* 洞前沿：土堆 / 礁石 / 草，挡住动物下半身 */
+.pk-front {
+  position: absolute; left: 2%; right: 2%; bottom: 6%; height: 18%; z-index: 2;
+  background: var(--rim);
+  border-radius: 0 0 50% 50% / 0 0 100% 100%;
+  box-shadow: inset 0 -1vmin 0 rgba(0, 0, 0, .12);
+  pointer-events: none;
+}
+.pk-s-sea .pk-front { background: linear-gradient(#ced4da, #adb5bd); height: 22%; border-radius: 40% 40% 50% 50%; }
+.pk-s-grass .pk-hole::before { display: none; }
+.pk-s-grass .pk-win { bottom: 30%; }
+.pk-s-grass .pk-front {
+  bottom: 0; height: 48%; left: -4%; right: -4%;
+  background:
+    radial-gradient(circle at 18% 62%, #69db7c 0 30%, transparent 31%),
+    radial-gradient(circle at 50% 48%, #51cf66 0 34%, transparent 35%),
+    radial-gradient(circle at 82% 62%, #69db7c 0 30%, transparent 31%),
+    linear-gradient(transparent 62%, #40c057 62%);
+  border-radius: 0; box-shadow: none;
+}
+.pk-hole.glow { animation: glow .6s ease-in-out 3; }

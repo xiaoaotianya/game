@@ -50,6 +50,12 @@ export const activities: Activity[] = [
   a('puzzle-animals', 'games', 'puzzle', 'animals', '动物拼图', 'Animal Puzzle', 'ui/puzzle', '#ffe8cc'),
   a('puzzle-wild', 'games', 'puzzle', 'wild', '森林拼图', 'Forest Puzzle', 'items/fox', '#d3f9d8'),
   a('puzzle-ocean', 'games', 'puzzle', 'ocean', '海洋拼图', 'Ocean Puzzle', 'items/octopus', '#c5f6fa'),
+  a('peek-animals', 'games', 'peek', 'animals', '躲猫猫', 'Peekaboo', 'ui/mouse', '#d3f9d8', { scene: 'hole' }),
+  a('peek-ocean', 'games', 'peek', 'ocean', '海底躲猫猫', 'Ocean Peekaboo', 'items/crab', '#c5f6fa', { scene: 'sea' }),
+  a('peek-nature', 'games', 'peek', 'nature', '草丛虫虫', 'Bugs in the Grass', 'items/ladybug', '#d8f5a2', { scene: 'grass' }),
+  a('scratch-animals', 'games', 'scratch', 'animals', '刮刮乐', 'Scratch & See', 'items/cat', '#e5dbff'),
+  a('scratch-vehicles', 'games', 'scratch', 'vehicles', '刮出车车', 'Scratch Vehicles', 'items/bus', '#d0ebff'),
+  a('scratch-fruits', 'games', 'scratch', 'fruits', '刮出水果', 'Scratch Fruits', 'items/peach', '#ffe3e3'),
 
   // 动动脑：观察、记忆、比较、分类
   a('memory-animals', 'brain', 'memory', 'animals', '动物翻翻乐', 'Animal Memory', 'items/owl', '#e5dbff'),
@@ -60,6 +66,9 @@ export const activities: Activity[] = [
   a('bigsmall-fruits', 'brain', 'big-small', 'fruits', '水果大小', 'Big & Small Fruits', 'items/watermelon', '#ffd1dc'),
   a('sort-colors', 'brain', 'sort-color', 'colorful', '颜色分类', 'Colors', 'ui/palette', '#fff3bf'),
   a('sort-fruits', 'brain', 'sort-color', 'fruits', '水果颜色', 'Fruit Colors', 'items/grapes', '#f3d9fa'),
+  a('shape-box', 'brain', 'shape-box', 'shapes', '形状投投盒', 'Shape Sorter', 'items/star', '#d0ebff'),
+  a('eat-match', 'brain', 'feed-match', undefined, '谁吃什么', 'Who Eats What?', 'items/carrot', '#ffe8cc', { set: 'food' }),
+  a('home-match', 'brain', 'feed-match', undefined, '送动物回家', 'Take Them Home', 'ui/house', '#d3f9d8', { set: 'home' }),
   a('sort-veggies', 'brain', 'sort-color', 'veggies', '蔬菜颜色', 'Veggie Colors', 'items/pepper', '#d3f9d8'),
 
   // 认识数字：先认、再数、再用
@@ -104,6 +113,8 @@ export const activities: Activity[] = [
 
   // 儿歌音乐
   a('piano-animals', 'music', 'piano', undefined, '动物钢琴', 'Piano', 'ui/piano', '#e5dbff'),
+  a('drum-free', 'music', 'drum', undefined, '小鼓手', 'Little Drummer', 'ui/music', '#ffe3e3', { mode: 'free' }),
+  a('drum-echo', 'music', 'drum', undefined, '跟我敲', 'Copy My Beat', 'items/clock', '#fff3bf', { mode: 'echo' }),
   a('song-twinkle', 'music', 'song-tap', undefined, '小星星', 'Twinkle Star', 'items/star', '#fff3bf', { song: 'twinkle' }),
   a('song-tigers', 'music', 'song-tap', undefined, '两只老虎', 'Brother John', 'ui/tiger', '#ffe8cc', { song: 'tigers' }),
   a('song-boat', 'music', 'song-tap', undefined, '划小船', 'Row Your Boat', 'items/boat', '#d0ebff', { song: 'boat' }),
