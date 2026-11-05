@@ -30,6 +30,8 @@ export const sections: Section[] = [
   { id: 'numbers', title: { zh: '认识数字', en: 'Numbers' }, icon: 'items/blocks', color: '#ffe8cc' },
   { id: 'cards', title: { zh: '认知卡片', en: 'Flashcards' }, icon: 'ui/cards', color: '#d0ebff' },
   { id: 'habit', title: { zh: '生活习惯', en: 'Good Habits' }, icon: 'items/toothbrush', color: '#c5f6fa' },
+  { id: 'feelings', title: { zh: '认识情绪', en: 'Feelings' }, icon: 'items/heart', color: '#ffe3e3' },
+  { id: 'math', title: { zh: '数学启蒙', en: 'Math' }, icon: 'items/triangle', color: '#d3f9d8' },
   { id: 'art', title: { zh: '创意画板', en: 'Art' }, icon: 'ui/palette', color: '#ffd1dc' },
   { id: 'music', title: { zh: '儿歌音乐', en: 'Music' }, icon: 'ui/music', color: '#e5dbff' },
 ];
@@ -50,6 +52,9 @@ export const activities: Activity[] = [
   a('puzzle-animals', 'games', 'puzzle', 'animals', '动物拼图', 'Animal Puzzle', 'ui/puzzle', '#ffe8cc'),
   a('puzzle-wild', 'games', 'puzzle', 'wild', '森林拼图', 'Forest Puzzle', 'items/fox', '#d3f9d8'),
   a('puzzle-ocean', 'games', 'puzzle', 'ocean', '海洋拼图', 'Ocean Puzzle', 'items/octopus', '#c5f6fa'),
+  a('fish-ocean', 'games', 'fishing', 'ocean', '钓鱼', 'Go Fishing', 'items/fish', '#c5f6fa'),
+  a('stack-blocks', 'games', 'stack', undefined, '叠高高', 'Stack It Up', 'items/blocks', '#fff3bf'),
+  a('trace-cars', 'games', 'trace', 'vehicles', '小车开回家', 'Drive Home', 'items/car', '#d0ebff'),
   a('peek-animals', 'games', 'peek', 'animals', '躲猫猫', 'Peekaboo', 'ui/mouse', '#d3f9d8', { scene: 'hole' }),
   a('peek-ocean', 'games', 'peek', 'ocean', '海底躲猫猫', 'Ocean Peekaboo', 'items/crab', '#c5f6fa', { scene: 'sea' }),
   a('peek-nature', 'games', 'peek', 'nature', '草丛虫虫', 'Bugs in the Grass', 'items/ladybug', '#d8f5a2', { scene: 'grass' }),
@@ -102,8 +107,24 @@ export const activities: Activity[] = [
   a('scrub-teeth', 'habit', 'scrub', undefined, '刷牙牙', 'Brush Teeth', 'items/tooth', '#d0ebff', { set: 'teeth' }),
   a('scrub-hands', 'habit', 'scrub', undefined, '洗手手', 'Wash Hands', 'items/soap', '#fff3bf', { set: 'hands' }),
   a('scrub-cars', 'habit', 'scrub', undefined, '洗车车', 'Car Wash', 'items/sponge', '#ffe8cc', { set: 'cars' }),
+  a('tidy-toys', 'habit', 'tidy-up', undefined, '收玩具', 'Tidy Up', 'items/teddy', '#ffe8cc'),
+  a('dress-weather', 'habit', 'dress-up', undefined, '穿衣服', 'Get Dressed', 'items/umbrella', '#d0ebff'),
+  a('order-morning', 'habit', 'day-order', undefined, '早上做什么', 'Morning Routine', 'items/sun', '#fff3bf', { set: 'morning' }),
+  a('order-night', 'habit', 'day-order', undefined, '睡觉前', 'Bedtime Routine', 'ui/moon', '#e5dbff', { set: 'night' }),
   a('cards-daily', 'habit', 'flashcards', 'daily', '家里的东西', 'Things at Home', 'items/cup', '#e5dbff'),
   a('find-daily', 'habit', 'listen-find', 'daily', '找一找', 'Find at Home', 'items/backpack', '#d3f9d8'),
+
+  // 认识情绪
+  a('feel-cards', 'feelings', 'emotion-cards', undefined, '表情卡片', 'Feelings', '😊', '#fff3bf'),
+  a('feel-story', 'feelings', 'emotion-story', undefined, '它怎么了', 'How Does It Feel?', '🥺', '#d0ebff'),
+
+  // 数学启蒙：大小排序、规律、一一对应
+  a('size-animals', 'math', 'size-order', 'animals', '排排队', 'Small to Big', 'items/giraffe', '#d3f9d8'),
+  a('size-fruits', 'math', 'size-order', 'fruits', '水果排队', 'Fruit Line-up', 'items/pear', '#ffe3e3'),
+  a('pattern-colors', 'math', 'pattern', 'colorful', '找规律', 'Patterns', 'items/diamond', '#e5dbff'),
+  a('pattern-fruits', 'math', 'pattern', 'fruits', '水果规律', 'Fruit Patterns', 'items/grapes', '#f3d9fa'),
+  a('pattern-shapes', 'math', 'pattern', 'shapes', '形状规律', 'Shape Patterns', 'items/oval', '#fff3bf'),
+  a('share-apples', 'math', 'share', undefined, '分一分', 'Share It', 'items/apple', '#ffe8cc'),
 
   // 创意画板
   a('color-animals', 'art', 'coloring', undefined, '给动物涂色', 'Color Animals', 'items/butterfly', '#fff3bf', { set: 'animals' }),

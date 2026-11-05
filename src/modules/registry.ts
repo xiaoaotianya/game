@@ -156,4 +156,81 @@ export const modules: Record<string, ModuleManifest> = {
     levels: 3, // 跟我敲：2 / 3 / 4 下
     load: () => import('./drum'),
   },
+  'tidy-up': {
+    id: 'tidy-up',
+    kind: 'game',
+    skills: ['habit', 'fine-motor'],
+    levels: 3, // 3 / 4 / 6 件
+    load: () => import('./tidy-up'),
+  },
+  'dress-up': {
+    id: 'dress-up',
+    kind: 'game',
+    skills: ['habit', 'cognition', 'language'],
+    levels: 3, // 选项 3 / 4 / 5 个
+    load: () => import('./dress-up'),
+  },
+  'day-order': {
+    id: 'day-order',
+    kind: 'game',
+    skills: ['habit', 'cognition'],
+    levels: 3, // 2 / 3 / 4 步
+    load: () => import('./day-order'),
+  },
+  'emotion-cards': {
+    id: 'emotion-cards',
+    kind: 'course',
+    skills: ['language', 'cognition'],
+    levels: 1,
+    load: () => import('./emotion-cards'),
+  },
+  'emotion-story': {
+    id: 'emotion-story',
+    kind: 'game',
+    skills: ['language', 'cognition'],
+    levels: 2, // 2 / 3 张脸
+    load: () => import('./emotion-story'),
+  },
+  'size-order': {
+    id: 'size-order',
+    kind: 'game',
+    skills: ['number', 'cognition', 'fine-motor'],
+    levels: 2, // 3 / 4 个
+    load: () => import('./size-order'),
+  },
+  pattern: {
+    id: 'pattern',
+    kind: 'game',
+    skills: ['cognition', 'color-shape'],
+    levels: 3, // AB / AAB·ABB / ABC
+    load: () => import('./pattern'),
+  },
+  share: {
+    id: 'share',
+    kind: 'game',
+    skills: ['number', 'cognition'],
+    levels: 3, // 2 / 3 / 4 只
+    load: () => import('./share'),
+  },
+  fishing: {
+    id: 'fishing',
+    kind: 'game',
+    skills: ['cognition', 'fine-motor', 'language'],
+    levels: 3, // 自由钓 / 按名字钓 / 按名字钓+快
+    load: () => import('./fishing'),
+  },
+  stack: {
+    id: 'stack',
+    kind: 'game',
+    skills: ['fine-motor', 'cognition'],
+    levels: 3, // 摆动速度
+    load: () => import('./stack'),
+  },
+  trace: {
+    id: 'trace',
+    kind: 'game',
+    skills: ['fine-motor'],
+    levels: 3, // 直路 / 弯路 / S 弯
+    load: () => import('./trace'),
+  },
 };
